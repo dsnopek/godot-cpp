@@ -33,6 +33,7 @@
 #include <godot_cpp/godot.hpp>
 
 #include <godot_cpp/core/binder_common.hpp>
+#include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 
 #include <utility>
@@ -411,7 +412,12 @@ Variant::operator Object *() const {
 	if (obj == nullptr) {
 		return nullptr;
 	}
-	return reinterpret_cast<Object *>(internal::gde_interface->object_get_instance_binding(obj, internal::token, &Object::___binding_callbacks));
+	const GDExtensionInstanceBindingCallbacks *binding_callbacks = &Object::___binding_callbacks;
+	GDExtensionStringNamePtr class_name = internal::gde_interface->object_get_class_name(obj);
+	if (class_name != nullptr) {
+		binding_callbacks = ClassDB::get_instance_binding_callbacks(*(const StringName *)class_name);
+	}
+	return reinterpret_cast<Object *>(internal::gde_interface->object_get_instance_binding(obj, internal::token, binding_callbacks));
 }
 
 Variant::operator ObjectID() const {

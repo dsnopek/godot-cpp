@@ -235,6 +235,7 @@ add_sources(sources, "src/classes", "cpp")
 add_sources(sources, "src/core", "cpp")
 add_sources(sources, "src/variant", "cpp")
 sources.extend([f for f in bindings if str(f).endswith(".cpp")])
+sources.append("gen/src/engine_classes.cpp")
 
 suffix = ".{}.{}".format(env["platform"], env["target"])
 if env.dev_build:

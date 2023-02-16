@@ -63,6 +63,7 @@ GDExtensionBool GDExtensionBinding::init(const GDExtensionInterface *p_interface
 	ERR_FAIL_COND_V_MSG(init_callback == nullptr, false, "Initialization callback must be defined.");
 
 	Variant::init_bindings();
+	register_engine_classes();
 
 	return true;
 }
