@@ -104,7 +104,6 @@ public:
 private:
 	// This may only contain custom classes, not Godot classes
 	static std::unordered_map<StringName, ClassInfo> classes;
-	// This contains instance binding method callbacks only for Godot classes
 	static std::unordered_map<StringName, const GDExtensionInstanceBindingCallbacks *> instance_binding_callbacks;
 
 	static MethodBind *bind_methodfi(uint32_t p_flags, MethodBind *p_bind, const MethodDefinition &method_name, const void **p_defs, int p_defcount);
@@ -166,6 +165,8 @@ public:
 
 template <class T, bool is_abstract>
 void ClassDB::_register_class(bool p_virtual) {
+	instance_binding_callbacks[T::get_class_static()] = &T::___binding_callbacks;
+
 	// Register this class within our plugin
 	ClassInfo cl;
 	cl.name = T::get_class_static();
