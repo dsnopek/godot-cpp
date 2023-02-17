@@ -317,7 +317,7 @@ GDExtensionClassCallVirtual ClassDB::get_virtual_func(void *p_userdata, GDExtens
 
 const GDExtensionInstanceBindingCallbacks *ClassDB::get_instance_binding_callbacks(const StringName &p_class) {
 	std::unordered_map<StringName, const GDExtensionInstanceBindingCallbacks *>::iterator callbacks_it = instance_binding_callbacks.find(p_class);
-	ERR_FAIL_COND_V_MSG(callbacks_it == instance_binding_callbacks.end(), nullptr, String("Engine class '{0}' doesn't exist.").format(Array::make(p_class)));
+	ERR_FAIL_COND_V_MSG(callbacks_it == instance_binding_callbacks.end(), nullptr, String("Cannot find instance binding callbacks for class '{0}'.").format(Array::make(p_class)));
 	return callbacks_it->second;
 }
 
