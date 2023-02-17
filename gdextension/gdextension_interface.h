@@ -573,7 +573,7 @@ typedef struct {
 
 	void (*object_set_instance)(GDExtensionObjectPtr p_o, GDExtensionConstStringNamePtr p_classname, GDExtensionClassInstancePtr p_instance); /* p_classname should be a registered extension class and should extend the p_o object's class. */
 
-	GDExtensionStringNamePtr (*object_get_class_name)(GDExtensionConstObjectPtr p_object);
+	GDExtensionBool (*object_get_class_name)(GDExtensionConstObjectPtr p_object, GDExtensionStringNamePtr r_class_name);
 	GDExtensionObjectPtr (*object_cast_to)(GDExtensionConstObjectPtr p_object, void *p_class_tag);
 	GDExtensionObjectPtr (*object_get_instance_from_id)(GDObjectInstanceID p_instance_id);
 	GDObjectInstanceID (*object_get_instance_id)(GDExtensionConstObjectPtr p_object);
