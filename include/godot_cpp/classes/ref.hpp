@@ -243,7 +243,7 @@ struct PtrToArg<Ref<T>> {
 		GDExtensionRefPtr ref = (GDExtensionRefPtr)p_ptr;
 		ERR_FAIL_NULL_V(ref, Ref<T>());
 
-		T *obj = reinterpret_cast<T *>(godot::internal::gde_interface->object_get_instance_binding(godot::internal::gde_interface->ref_get_object(ref), godot::internal::token, &T::___binding_callbacks));
+		T *obj = reinterpret_cast<T *>(godot::internal::get_object_instance_binding(godot::internal::gde_interface->ref_get_object(ref)));
 		return Ref<T>(obj);
 	}
 
@@ -266,7 +266,7 @@ struct PtrToArg<const Ref<T> &> {
 	typedef Ref<T> EncodeT;
 
 	_FORCE_INLINE_ static Ref<T> convert(const void *p_ptr) {
-		return Ref<T>(reinterpret_cast<T *>(godot::internal::gde_interface->object_get_instance_binding(*reinterpret_cast<GDExtensionObjectPtr *>(const_cast<void *>(p_ptr)), godot::internal::token, &T::___binding_callbacks)));
+		return Ref<T>(reinterpret_cast<T *>(godot::internal::get_object_instance_binding(*reinterpret_cast<GDExtensionObjectPtr *>(const_cast<void *>(p_ptr)))));
 	}
 };
 
