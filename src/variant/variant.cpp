@@ -412,16 +412,7 @@ Variant::operator Object *() const {
 	if (obj == nullptr) {
 		return nullptr;
 	}
-
-	StringName class_name;
-	if (!internal::gde_interface->object_get_class_name(obj, reinterpret_cast<GDExtensionStringNamePtr>(class_name._native_ptr()))) {
-		ERR_FAIL_V_MSG(nullptr, "Unable to get object class name");
-	}
-
-	const GDExtensionInstanceBindingCallbacks *binding_callbacks = ClassDB::get_instance_binding_callbacks(class_name);
-	ERR_FAIL_COND_V(binding_callbacks == nullptr, nullptr);
-
-	return reinterpret_cast<Object *>(internal::gde_interface->object_get_instance_binding(obj, internal::token, binding_callbacks));
+	return internal::get_object_instance_binding(obj);
 }
 
 Variant::operator ObjectID() const {

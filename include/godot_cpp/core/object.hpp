@@ -52,6 +52,12 @@
 
 namespace godot {
 
+namespace internal {
+
+Object *get_object_instance_binding(GodotObject *);
+
+} // namespace internal
+
 struct MethodInfo {
 	StringName name;
 	PropertyInfo return_val;
