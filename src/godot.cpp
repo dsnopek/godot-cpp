@@ -52,7 +52,7 @@ GDExtensionBinding::Callback GDExtensionBinding::terminate_callback = nullptr;
 GDExtensionInitializationLevel GDExtensionBinding::minimum_initialization_level = GDEXTENSION_INITIALIZATION_CORE;
 
 #define LOAD_PROC_ADDRESS(m_name, m_type)        \
-	gdextension_interface.m_name = (##m_type)p_get_proc_address(#m_name); \
+	gdextension_interface.m_name = (m_type)p_get_proc_address(#m_name); \
 	ERR_FAIL_NULL_V_MSG(gdextension_interface.m_name, false, "Unable to load GDExtension interface function " #m_name "()")
 
 GDExtensionBool GDExtensionBinding::init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
