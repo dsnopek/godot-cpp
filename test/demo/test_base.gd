@@ -10,28 +10,41 @@ func __get_stack_frame():
 			return s
 	return null
 
+func __assert_pass():
+	test_passes += 1
+
+func __assert_fail():
+	test_failures += 1
+	var s = __get_stack_frame()
+	print (" == FAILURE: In function %s() from '%s' on line %s" % [s.function, s.source, s.line])
+
 func assert_equal(actual, expected):
 	if actual == expected:
-		test_passes += 1
+		__assert_pass()
 	else:
-		var s = __get_stack_frame()
-		print (" == FAILURE: In function %s() from '%s' on line %s" % [s.function, s.source, s.line])
+		__assert_fail()
 		print ("    |-> Expected '%s' but got '%s'" % [expected, actual])
-		test_failures += 1
 
 func assert_true(v):
-		assert_equal(v, true)
+	assert_equal(v, true)
 
 func assert_false(v):
-		assert_equal(v, false)
+	assert_equal(v, false)
+
+func assert_not_equal(actual, expected):
+	if actual != expected:
+		__assert_pass()
+	else:
+		__assert_fail()
+		print ("    |-> Expected '%s' NOT to equal '%s'" % [expected, actual])
 
 func exit_with_status() -> void:
 	var success: bool = (test_failures == 0)
 	print ("")
-	print ("[color=%s] ==== TESTS FINISHED ==== [/color]" % ("green" if success else "red"))
+	print_rich ("[color=%s] ==== TESTS FINISHED ==== [/color]" % ("green" if success else "red"))
 	print ("")
-	print ("   PASSES: [color=green]%s[/color]" % test_passes)
-	print ("   FAILURES: [color=red]%s[/color]" % test_failures)
+	print_rich ("   PASSES: [color=green]%s[/color]" % test_passes)
+	print_rich ("   FAILURES: [color=red]%s[/color]" % test_failures)
 	print ("")
 
 	if success:

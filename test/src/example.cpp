@@ -28,12 +28,12 @@ ExampleRef::ExampleRef() {
 	id = ++last_id;
 	instance_count++;
 
-	UtilityFunctions::print("ExampleRef ", itos(id), " created, current instance count: ", itos(instance_count));
+	//UtilityFunctions::print("ExampleRef ", itos(id), " created, current instance count: ", itos(instance_count));
 }
 
 ExampleRef::~ExampleRef() {
 	instance_count--;
-	UtilityFunctions::print("ExampleRef ", itos(id), " destroyed, current instance count: ", itos(instance_count));
+	//UtilityFunctions::print("ExampleRef ", itos(id), " destroyed, current instance count: ", itos(instance_count));
 }
 
 int Example::test_static(int p_a, int p_b) {
@@ -41,7 +41,7 @@ int Example::test_static(int p_a, int p_b) {
 }
 
 void Example::test_static2() {
-	UtilityFunctions::print("  void static");
+	//UtilityFunctions::print("  void static");
 }
 
 int Example::def_args(int p_a, int p_b) {
@@ -49,7 +49,7 @@ int Example::def_args(int p_a, int p_b) {
 }
 
 void Example::_notification(int p_what) {
-	UtilityFunctions::print("Notification: ", String::num(p_what));
+	//UtilityFunctions::print("Notification: ", String::num(p_what));
 }
 
 bool Example::_set(const StringName &p_name, const Variant &p_value) {
@@ -179,29 +179,27 @@ void Example::_bind_methods() {
 }
 
 Example::Example() {
-	UtilityFunctions::print("Constructor.");
+	//UtilityFunctions::print("Constructor.");
 }
 
 Example::~Example() {
-	UtilityFunctions::print("Destructor.");
+	//UtilityFunctions::print("Destructor.");
 }
 
 // Methods.
 void Example::simple_func() {
-	UtilityFunctions::print("  Simple func called.");
+	emit_custom_signal("simple_func", 3);
 }
 
 void Example::simple_const_func() const {
-	UtilityFunctions::print("  Simple const func called.");
+	((Example *)this)->emit_custom_signal("simple_const_func", 4);
 }
 
 String Example::return_something(const String &base) {
-	UtilityFunctions::print("  Return something called.");
 	return base;
 }
 
 Viewport *Example::return_something_const() const {
-	UtilityFunctions::print("  Return something const called.");
 	if (is_inside_tree()) {
 		Viewport *result = get_viewport();
 		return result;
