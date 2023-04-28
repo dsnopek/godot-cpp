@@ -130,12 +130,12 @@ jobs:
           repo: godotengine/godot
           branch: master
           name: linux-editor-mono
-          path: godot-artifacts
+          #path: godot-artifacts
 
       - name: List artifacts
         if: ${{ matrix.run-tests }}
         run: |
-          ls -R godot-artifacts
+          ls -R
 
 
 #      - name: Download Godot
