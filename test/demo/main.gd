@@ -1,16 +1,16 @@
-extends Node
+extends "res://test_base.gd"
+
+var custom_signal_emitted = null
+
 
 func _ready():
-	# Bind signals
-	prints("Signal bind")
-	$Button.button_up.connect($Example.emit_custom_signal.bind("Button", 42))
-
-	prints("")
+	# Signal.
+	$Example.emit_custom_signal("Button", 42)
+	assert_equal(custom_signal_emitted, ["Button", 42])
 
 	# To string.
-	prints("To string")
-	prints("  Example --> ", $Example.to_string())
-	prints("  ExampleMin --> ", $Example/ExampleMin.to_string())
+	assert_equal($Example.to_string(),'Example:[ GDExtension::Example <--> Instance ID:%s ]' % $Example.get_instance_id())
+	assert_equal($Example/ExampleMin.to_string(), 'ExampleMin:[Wrapped:%s]' % $Example/ExampleMin.get_instance_id())
 
 	# Call static methods.
 	prints("Static method calls")
@@ -76,5 +76,7 @@ func _ready():
 	prints("  returned BitField", $Example.test_bitfield(0))
 	prints("  returned BitField", $Example.test_bitfield(Example.FLAG_ONE | Example.FLAG_TWO))
 
+	exit_with_status()
+
 func _on_Example_custom_signal(signal_name, value):
-	prints("Example emitted:", signal_name, value)
+	custom_signal_emitted = [signal_name, value]
