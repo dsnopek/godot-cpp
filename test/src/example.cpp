@@ -228,23 +228,19 @@ Ref<ExampleRef> Example::extended_ref_checks(Ref<ExampleRef> p_ref) const {
 	// This is therefor the prefered way of instancing and returning a refcounted object:
 	Ref<ExampleRef> ref;
 	ref.instantiate();
-
-	UtilityFunctions::print("  Example ref checks called with value: ", p_ref->get_instance_id(), ", returning value: ", ref->get_instance_id());
 	return ref;
 }
 
 Variant Example::varargs_func(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error) {
-	UtilityFunctions::print("  Varargs (Variant return) called with ", String::num((double)arg_count), " arguments");
 	return arg_count;
 }
 
 int Example::varargs_func_nv(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error) {
-	UtilityFunctions::print("  Varargs (int return) called with ", String::num((double)arg_count), " arguments");
-	return 42;
+	return 42 + arg_count;
 }
 
 void Example::varargs_func_void(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error) {
-	UtilityFunctions::print("  Varargs (no return) called with ", String::num((double)arg_count), " arguments");
+	emit_custom_signal("varargs_func_void", arg_count + 1);
 }
 
 void Example::emit_custom_signal(const String &name, int value) {
@@ -283,10 +279,12 @@ int Example::test_vector_ops() const {
 	return ret;
 }
 
-void Example::test_tarray_arg(const TypedArray<int64_t> &p_array) {
+int Example::test_tarray_arg(const TypedArray<int64_t> &p_array) {
+	int sum = 0;
 	for (int i = 0; i < p_array.size(); i++) {
-		UtilityFunctions::print(p_array[i]);
+		sum += (int)p_array[i];
 	}
+	return sum;
 }
 
 TypedArray<Vector2> Example::test_tarray() const {

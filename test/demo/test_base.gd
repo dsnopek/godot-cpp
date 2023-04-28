@@ -16,7 +16,7 @@ func __assert_pass():
 func __assert_fail():
 	test_failures += 1
 	var s = __get_stack_frame()
-	print (" == FAILURE: In function %s() from '%s' on line %s" % [s.function, s.source, s.line])
+	print_rich ("[color=red] == FAILURE: In function %s() from '%s' on line %s[/color]" % [s.function, s.source, s.line])
 
 func assert_equal(actual, expected):
 	if actual == expected:

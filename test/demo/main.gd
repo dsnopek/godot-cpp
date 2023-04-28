@@ -36,33 +36,34 @@ func _ready():
 	var ret_ref = $Example.return_extended_ref()
 	assert_not_equal(ret_ref.get_instance_id(), 0)
 	assert_not_equal(ret_ref.get_id(), 0)
-	assert_equal($Example.get_v4(), null)
+	assert_equal($Example.get_v4(), Vector4(1.2, 3.4, 5.6, 7.8))
 	assert_equal($Example.test_node_argument($Example), $Example)
 
-	prints("VarArg method calls")
+	# VarArg method calls.
 	var ref = ExampleRef.new()
-	prints("  sending ref: ", ref.get_instance_id(), "returned ref: ", $Example.extended_ref_checks(ref).get_instance_id())
-	prints("  vararg args", $Example.varargs_func("some", "arguments", "to", "test"))
-	prints("  vararg_nv ret", $Example.varargs_func_nv("some", "arguments", "to", "test"))
+	assert_not_equal($Example.extended_ref_checks(ref).get_instance_id(), ref.get_instance_id())
+	assert_equal($Example.varargs_func("some", "arguments", "to", "test"), 4)
+	assert_equal($Example.varargs_func_nv("some", "arguments", "to", "test"), 46)
 	$Example.varargs_func_void("some", "arguments", "to", "test")
+	assert_equal(custom_signal_emitted, ["varargs_func_void", 5])
 
-	prints("Method calls with default values")
-	prints("  defval (300)", $Example.def_args())
-	prints("  defval (250)", $Example.def_args(50))
-	prints("  defval (150)", $Example.def_args(50, 100))
+	# Method calls with default values.
+	assert_equal($Example.def_args(), 300)
+	assert_equal($Example.def_args(50), 250)
+	assert_equal($Example.def_args(50, 100), 150)
 
-	prints("Array and Dictionary")
-	prints("  test array", $Example.test_array())
-	prints("  test tarray", $Example.test_tarray())
-	prints("  test dictionary", $Example.test_dictionary())
+	# Array and Dictionary
+	assert_equal($Example.test_array(), [1, 2])
+	assert_equal($Example.test_tarray(), [ Vector2(1, 2), Vector2(2, 3) ])
+	assert_equal($Example.test_dictionary(), {"hello": "world", "foo": "bar"})
 	var array: Array[int] = [1, 2, 3]
-	$Example.test_tarray_arg(array)
+	assert_equal($Example.test_tarray_arg(array), 6)
 
-	prints("String += operator")
-	prints("  test string +=", $Example.test_string_ops())
+	# String += operator
+	assert_equal($Example.test_string_ops(), "ABCĎE")
 
-	prints("PackedArray iterators")
-	prints("  test packed array iterators", $Example.test_vector_ops())
+	# PackedArray iterators
+	assert_equal($Example.test_vector_ops(), 105)
 
 	prints("Properties")
 	prints("  custom position is", $Example.group_subgroup_custom_position)
