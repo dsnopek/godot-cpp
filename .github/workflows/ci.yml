@@ -131,6 +131,7 @@ jobs:
           branch: master
           workflow: linux_builds.yml
           name: linux-editor-mono
+          search_artifacts: true
           #name: '.*'
           #name_is_regexp: true
           #path: godot-artifacts
