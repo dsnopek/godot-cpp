@@ -220,7 +220,6 @@ ExampleRef *Example::return_extended_ref() const {
 }
 
 Example *Example::test_node_argument(Example *p_node) const {
-	UtilityFunctions::print("  Test node argument called with ", p_node ? String::num(p_node->get_instance_id()) : "null");
 	return p_node;
 }
 
@@ -307,7 +306,6 @@ Dictionary Example::test_dictionary() const {
 }
 
 BitField<Example::Flags> Example::test_bitfield(BitField<Flags> flags) {
-	UtilityFunctions::print("  Got BitField: ", String::num_int64(flags));
 	return flags;
 }
 

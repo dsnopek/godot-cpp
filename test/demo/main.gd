@@ -23,8 +23,6 @@ func _ready():
 	assert_equal($Example.property_from_list, Vector3(100, 200, 300))
 
 	# Call methods.
-	prints("Instance method calls")
-	# @todo How to verify that these functions got called? Maybe via the custom signal?
 	$Example.simple_func()
 	assert_equal(custom_signal_emitted, ['simple_func', 3])
 	($Example as Example).simple_const_func() # Force use of ptrcall
@@ -65,21 +63,21 @@ func _ready():
 	# PackedArray iterators
 	assert_equal($Example.test_vector_ops(), 105)
 
-	prints("Properties")
-	prints("  custom position is", $Example.group_subgroup_custom_position)
+	# Properties.
+	assert_equal($Example.group_subgroup_custom_position, Vector2(0, 0))
 	$Example.group_subgroup_custom_position = Vector2(50, 50)
-	prints("  custom position now is", $Example.group_subgroup_custom_position)
+	assert_equal($Example.group_subgroup_custom_position, Vector2(50, 50))
 
-	prints("Constants")
-	prints("  FIRST", $Example.FIRST)
-	prints("  ANSWER_TO_EVERYTHING", $Example.ANSWER_TO_EVERYTHING)
-	prints("  CONSTANT_WITHOUT_ENUM", $Example.CONSTANT_WITHOUT_ENUM)
+	# Constants.
+	assert_equal($Example.FIRST, 0)
+	assert_equal($Example.ANSWER_TO_EVERYTHING, 42)
+	assert_equal($Example.CONSTANT_WITHOUT_ENUM, 314)
 
-	prints("BitFields")
-	prints("  FLAG_ONE", Example.FLAG_ONE)
-	prints("  FLAG_TWO", Example.FLAG_TWO)
-	prints("  returned BitField", $Example.test_bitfield(0))
-	prints("  returned BitField", $Example.test_bitfield(Example.FLAG_ONE | Example.FLAG_TWO))
+	# BitFields.
+	assert_equal(Example.FLAG_ONE, 1)
+	assert_equal(Example.FLAG_TWO, 2)
+	assert_equal($Example.test_bitfield(0), 0)
+	assert_equal($Example.test_bitfield(Example.FLAG_ONE | Example.FLAG_TWO), 3)
 
 	exit_with_status()
 
