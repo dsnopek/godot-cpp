@@ -127,7 +127,7 @@ jobs:
         with:
           repo: godotengine/godot
           branch: master
-          name: linux
+          name: editor
           path: godot-artifacts
 
 #      - name: Build test without rebuilding godot-cpp (debug)
