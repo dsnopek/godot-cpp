@@ -114,8 +114,17 @@ jobs:
         run: |
           scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }}
 
+      - name: Download latest Godot artifacts
+        uses: dawidd6/action-download-artifact@v2.27.0
+        with:
+          repo: godotengine/godot
+          branch: master
+          name: Linux
+          path: godot-artifacts
+
       - name: Build test without rebuilding godot-cpp (debug)
         run: |
+          ls -R godot-artifacts
           cd test
           scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }} build_library=no
 
