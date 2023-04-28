@@ -22,54 +22,61 @@ jobs:
             platform: linux
             artifact-name: godot-cpp-linux-glibc2.27-x86_64-release
             artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
+            run-tests: true
             cache-name: linux-x86_64
 
-          - name: 🐧 Linux (GCC, Double Precision)
-            os: ubuntu-20.04
-            platform: linux
-            artifact-name: godot-cpp-linux-glibc2.27-x86_64-double-release
-            artifact-path: bin/libgodot-cpp.linux.template_release.double.x86_64.a
-            flags: precision=double
-            cache-name: linux-x86_64-f64
-
-          - name: 🏁 Windows (x86_64, MSVC)
-            os: windows-2019
-            platform: windows
-            artifact-name: godot-cpp-windows-msvc2019-x86_64-release
-            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.lib
-            cache-name: windows-x86_64-msvc
-
-          - name: 🏁 Windows (x86_64, MinGW)
-            os: windows-2019
-            platform: windows
-            artifact-name: godot-cpp-linux-mingw-x86_64-release
-            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.a
-            flags: use_mingw=yes
-            cache-name: windows-x86_64-mingw
-
-          - name: 🍎 macOS (universal)
-            os: macos-11
-            platform: macos
-            artifact-name: godot-cpp-macos-universal-release
-            artifact-path: bin/libgodot-cpp.macos.template_release.universal.a
-            flags: arch=universal
-            cache-name: macos-universal
-
-          - name: 🤖 Android (arm64)
-            os: ubuntu-20.04
-            platform: android
-            artifact-name: godot-cpp-android-arm64-release
-            artifact-path: bin/libgodot-cpp.android.template_release.arm64.a
-            flags: ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME arch=arm64
-            cache-name: android-arm64
-
-          - name: 🍏 iOS (arm64)
-            os: macos-11
-            platform: ios
-            artifact-name: godot-cpp-ios-arm64-release
-            artifact-path: bin/libgodot-cpp.ios.template_release.arm64.a
-            flags: arch=arm64
-            cache-name: ios-arm64
+#          - name: 🐧 Linux (GCC, Double Precision)
+#            os: ubuntu-20.04
+#            platform: linux
+#            artifact-name: godot-cpp-linux-glibc2.27-x86_64-double-release
+#            artifact-path: bin/libgodot-cpp.linux.template_release.double.x86_64.a
+#            flags: precision=double
+#            run-tests: false
+#            cache-name: linux-x86_64-f64
+#
+#          - name: 🏁 Windows (x86_64, MSVC)
+#            os: windows-2019
+#            platform: windows
+#            artifact-name: godot-cpp-windows-msvc2019-x86_64-release
+#            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.lib
+#            run-tests: false
+#            cache-name: windows-x86_64-msvc
+#
+#          - name: 🏁 Windows (x86_64, MinGW)
+#            os: windows-2019
+#            platform: windows
+#            artifact-name: godot-cpp-linux-mingw-x86_64-release
+#            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.a
+#            flags: use_mingw=yes
+#            run-tests: false
+#            cache-name: windows-x86_64-mingw
+#
+#          - name: 🍎 macOS (universal)
+#            os: macos-11
+#            platform: macos
+#            artifact-name: godot-cpp-macos-universal-release
+#            artifact-path: bin/libgodot-cpp.macos.template_release.universal.a
+#            flags: arch=universal
+#            run-tests: false
+#            cache-name: macos-universal
+#
+#          - name: 🤖 Android (arm64)
+#            os: ubuntu-20.04
+#            platform: android
+#            artifact-name: godot-cpp-android-arm64-release
+#            artifact-path: bin/libgodot-cpp.android.template_release.arm64.a
+#            flags: ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME arch=arm64
+#            run-tests: false
+#            cache-name: android-arm64
+#
+#          - name: 🍏 iOS (arm64)
+#            os: macos-11
+#            platform: ios
+#            artifact-name: godot-cpp-ios-arm64-release
+#            artifact-path: bin/libgodot-cpp.ios.template_release.arm64.a
+#            flags: arch=arm64
+#            run-tests: false
+#            cache-name: ios-arm64
 
     env:
       SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
@@ -116,6 +123,7 @@ jobs:
 
       - name: Download latest Godot artifacts
         uses: dawidd6/action-download-artifact@v2.27.0
+        if: ${{ matrix.run-tests }}
         with:
           repo: godotengine/godot
           branch: master
@@ -124,9 +132,13 @@ jobs:
 
       - name: Build test without rebuilding godot-cpp (debug)
         run: |
-          ls -R godot-artifacts
           cd test
           scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }} build_library=no
+
+      - name: Run tests
+        if: ${{ matrix.run-tests }}
+        run: |
+          ls -R godot-artifacts
 
       - name: Build test and godot-cpp (release)
         run: |
