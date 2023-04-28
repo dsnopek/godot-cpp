@@ -147,7 +147,7 @@ jobs:
         if: ${{ matrix.run-tests }}
         run: |
           cd test/demo
-          ./Godot_v4.1-dev1_linux.x86_64 --headless
+          ../../Godot_v4.1-dev1_linux.x86_64 --headless
 
       - name: Build test and godot-cpp (release)
         run: |
