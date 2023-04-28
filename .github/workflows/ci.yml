@@ -129,7 +129,7 @@ jobs:
           token: ${{ secrets.GODOT_ACCESS_TOKEN }}
           repo: godotengine/godot
           branch: master
-          name: linux
+          name: linux-editor-mono
           path: godot-artifacts
 
       - name: List artifacts
