@@ -126,7 +126,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2.27.0
         if: ${{ matrix.run-tests }}
         with:
-          token: ${{ secrets.GODOT_ACCESS_TOKEN }}
+          github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
           repo: godotengine/godot
           branch: master
           name: linux-editor-mono
