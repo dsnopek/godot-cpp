@@ -27,9 +27,17 @@ func assert_false(v):
 
 func exit_with_status() -> void:
 	var success: bool = (test_failures == 0)
+	print ("")
+	print ("[color=%s] ==== TESTS FINISHED ==== [/color]" % ("green" if success else "red"))
+	print ("")
+	print ("   PASSES: [color=green]%s[/color]" % test_passes)
+	print ("   FAILURES: [color=red]%s[/color]" % test_failures)
+	print ("")
+
 	if success:
-		print(" **** TESTS PASS ****")
+		print_rich("[color=green] ******** PASSED ******** [/color]")
 	else:
-		print(" **** TESTS FAILED ****")
+		print_rich("[color=red] ******** FAILED ********[/color]")
+	print("")
 
 	get_tree().quit(0 if success else 1)

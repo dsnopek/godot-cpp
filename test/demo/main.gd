@@ -13,19 +13,19 @@ func _ready():
 	assert_equal($Example/ExampleMin.to_string(), 'ExampleMin:[Wrapped:%s]' % $Example/ExampleMin.get_instance_id())
 
 	# Call static methods.
-	prints("Static method calls")
-	prints("  static (109)", Example.test_static(9, 100));
-	Example.test_static2();
+	assert_equal($Example.test_static(9, 100), 109);
+	$Example.test_static2()
 
 	# Property list.
-	prints("Property list")
 	$Example.property_from_list = Vector3(100, 200, 300)
-	prints("  property value ", $Example.property_from_list)
+	assert_equal($Example.property_from_list, Vector3(100, 200, 300))
 
 	# Call methods.
 	prints("Instance method calls")
+	# @todo How to verify that these functions got called? Maybe via the custom signal?
 	$Example.simple_func()
 	($Example as Example).simple_const_func() # Force use of ptrcall
+
 	prints("  returned", $Example.return_something("some string"))
 	prints("  returned const", $Example.return_something_const())
 	var null_ref = $Example.return_empty_ref()
