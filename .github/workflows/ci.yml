@@ -130,16 +130,16 @@ jobs:
           repo: godotengine/godot
           branch: master
           workflow: linux_builds.yml
+          workflow_conclusion: success
           name: linux-editor-mono
           search_artifacts: true
-          #name: '.*'
-          #name_is_regexp: true
-          #path: godot-artifacts
+          check_artifacts: true
+          path: godot-artifacts
 
       - name: List artifacts
         if: ${{ matrix.run-tests }}
         run: |
-          ls -R
+          ls -R godot-artifacts
 
 
 #      - name: Download Godot
