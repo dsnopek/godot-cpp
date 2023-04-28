@@ -130,6 +130,7 @@ jobs:
           repo: godotengine/godot
           branch: master
           name: '.*'
+          name_is_regexp: true
           #path: godot-artifacts
 
       - name: List artifacts
