@@ -129,8 +129,10 @@ jobs:
           github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
           repo: godotengine/godot
           branch: master
-          name: '.*'
-          name_is_regexp: true
+          workflow: linux_builds.yml
+          name: linux-editor-mono
+          #name: '.*'
+          #name_is_regexp: true
           #path: godot-artifacts
 
       - name: List artifacts
