@@ -121,24 +121,31 @@ jobs:
 #        run: |
 #          scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }}
 
-      - name: Download latest Godot artifacts
-        uses: dawidd6/action-download-artifact@v2.27.0
+#      - name: Download latest Godot artifacts
+#        uses: dawidd6/action-download-artifact@v2.27.0
+#        if: ${{ matrix.run-tests }}
+#        with:
+#          repo: godotengine/godot
+#          branch: master
+#          name: linux
+#          path: godot-artifacts
+
+      - name: Download Godot
         if: ${{ matrix.run-tests }}
-        with:
-          repo: godotengine/godot
-          branch: master
-          name: Editor
-          path: godot-artifacts
+        run: |
+          wget https://downloads.tuxfamily.org/godotengine/4.1/dev1/Godot_v4.1-dev1_linux.x86_64.zip
+          unzip Godot_v4.1-dev1_linux.x86_64.zip
+          ./Godot_v4.1-dev1_linux.x86_64 --version --headless
 
 #      - name: Build test without rebuilding godot-cpp (debug)
 #        run: |
 #          cd test
 #          scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }} build_library=no
 
-      - name: Run tests
-        if: ${{ matrix.run-tests }}
-        run: |
-          ls -R godot-artifacts
+#      - name: Run tests
+#        if: ${{ matrix.run-tests }}
+#        run: |
+#          ls -R godot-artifacts
 
 #      - name: Build test and godot-cpp (release)
 #        run: |
