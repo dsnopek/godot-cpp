@@ -135,7 +135,7 @@ jobs:
         uses: dsnopek/action-download-artifact@91dda23aa09c68860977dd0ed11d93c0ed3795e7
         if: ${{ matrix.run-tests }}
         with:
-          github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
+          #github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
           repo: godotengine/godot
           branch: master
           event: push
