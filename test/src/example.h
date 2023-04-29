@@ -102,7 +102,7 @@ public:
 	int def_args(int p_a = 100, int p_b = 200);
 
 	Array test_array() const;
-	void test_tarray_arg(const TypedArray<int64_t> &p_array);
+	int test_tarray_arg(const TypedArray<int64_t> &p_array);
 	TypedArray<Vector2> test_tarray() const;
 	Dictionary test_dictionary() const;
 	Example *test_node_argument(Example *p_node) const;
