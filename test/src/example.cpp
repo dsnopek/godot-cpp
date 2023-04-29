@@ -28,12 +28,12 @@ ExampleRef::ExampleRef() {
 	id = ++last_id;
 	instance_count++;
 
-	UtilityFunctions::print("ExampleRef ", itos(id), " created, current instance count: ", itos(instance_count));
+	//UtilityFunctions::print("ExampleRef ", itos(id), " created, current instance count: ", itos(instance_count));
 }
 
 ExampleRef::~ExampleRef() {
 	instance_count--;
-	UtilityFunctions::print("ExampleRef ", itos(id), " destroyed, current instance count: ", itos(instance_count));
+	//UtilityFunctions::print("ExampleRef ", itos(id), " destroyed, current instance count: ", itos(instance_count));
 }
 
 int Example::test_static(int p_a, int p_b) {
@@ -41,7 +41,7 @@ int Example::test_static(int p_a, int p_b) {
 }
 
 void Example::test_static2() {
-	UtilityFunctions::print("  void static");
+	//UtilityFunctions::print("  void static");
 }
 
 int Example::def_args(int p_a, int p_b) {
@@ -49,7 +49,7 @@ int Example::def_args(int p_a, int p_b) {
 }
 
 void Example::_notification(int p_what) {
-	UtilityFunctions::print("Notification: ", String::num(p_what));
+	//UtilityFunctions::print("Notification: ", String::num(p_what));
 }
 
 bool Example::_set(const StringName &p_name, const Variant &p_value) {
@@ -179,29 +179,27 @@ void Example::_bind_methods() {
 }
 
 Example::Example() {
-	UtilityFunctions::print("Constructor.");
+	//UtilityFunctions::print("Constructor.");
 }
 
 Example::~Example() {
-	UtilityFunctions::print("Destructor.");
+	//UtilityFunctions::print("Destructor.");
 }
 
 // Methods.
 void Example::simple_func() {
-	UtilityFunctions::print("  Simple func called.");
+	emit_custom_signal("simple_func", 3);
 }
 
 void Example::simple_const_func() const {
-	UtilityFunctions::print("  Simple const func called.");
+	((Example *)this)->emit_custom_signal("simple_const_func", 4);
 }
 
 String Example::return_something(const String &base) {
-	UtilityFunctions::print("  Return something called.");
 	return base;
 }
 
 Viewport *Example::return_something_const() const {
-	UtilityFunctions::print("  Return something const called.");
 	if (is_inside_tree()) {
 		Viewport *result = get_viewport();
 		return result;
@@ -222,7 +220,6 @@ ExampleRef *Example::return_extended_ref() const {
 }
 
 Example *Example::test_node_argument(Example *p_node) const {
-	UtilityFunctions::print("  Test node argument called with ", p_node ? String::num(p_node->get_instance_id()) : "null");
 	return p_node;
 }
 
@@ -230,23 +227,19 @@ Ref<ExampleRef> Example::extended_ref_checks(Ref<ExampleRef> p_ref) const {
 	// This is therefor the prefered way of instancing and returning a refcounted object:
 	Ref<ExampleRef> ref;
 	ref.instantiate();
-
-	UtilityFunctions::print("  Example ref checks called with value: ", p_ref->get_instance_id(), ", returning value: ", ref->get_instance_id());
 	return ref;
 }
 
 Variant Example::varargs_func(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error) {
-	UtilityFunctions::print("  Varargs (Variant return) called with ", String::num((double)arg_count), " arguments");
 	return arg_count;
 }
 
 int Example::varargs_func_nv(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error) {
-	UtilityFunctions::print("  Varargs (int return) called with ", String::num((double)arg_count), " arguments");
-	return 42;
+	return 42 + arg_count;
 }
 
 void Example::varargs_func_void(const Variant **args, GDExtensionInt arg_count, GDExtensionCallError &error) {
-	UtilityFunctions::print("  Varargs (no return) called with ", String::num((double)arg_count), " arguments");
+	emit_custom_signal("varargs_func_void", arg_count + 1);
 }
 
 void Example::emit_custom_signal(const String &name, int value) {
@@ -285,10 +278,12 @@ int Example::test_vector_ops() const {
 	return ret;
 }
 
-void Example::test_tarray_arg(const TypedArray<int64_t> &p_array) {
+int Example::test_tarray_arg(const TypedArray<int64_t> &p_array) {
+	int sum = 0;
 	for (int i = 0; i < p_array.size(); i++) {
-		UtilityFunctions::print(p_array[i]);
+		sum += (int)p_array[i];
 	}
+	return sum;
 }
 
 TypedArray<Vector2> Example::test_tarray() const {
@@ -311,7 +306,6 @@ Dictionary Example::test_dictionary() const {
 }
 
 BitField<Example::Flags> Example::test_bitfield(BitField<Flags> flags) {
-	UtilityFunctions::print("  Got BitField: ", String::num_int64(flags));
 	return flags;
 }
 
