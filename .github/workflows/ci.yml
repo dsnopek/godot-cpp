@@ -123,7 +123,7 @@ jobs:
 #
       # @todo Get this to work!
       - name: Download latest Godot artifacts
-        uses: dawidd6/action-download-artifact@v2.27.0
+        uses: ./github-actions/action-download-artifact/
         if: ${{ matrix.run-tests }}
         with:
           github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
