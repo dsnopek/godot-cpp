@@ -137,9 +137,15 @@ jobs:
 #        uses: dawidd6/action-download-artifact@v2.27.0
 #        if: ${{ matrix.run-tests }}
 #        with:
+#          github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
 #          repo: godotengine/godot
 #          branch: master
-#          name: linux
+#          event: push
+#          workflow: linux_builds.yml
+#          workflow_conclusion: success
+#          name: linux-editor-mono
+#          search_artifacts: true
+#          check_artifacts: true
 #          path: godot-artifacts
 
       - name: Download Godot
