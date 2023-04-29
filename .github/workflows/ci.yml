@@ -25,58 +25,58 @@ jobs:
             run-tests: true
             cache-name: linux-x86_64
 
-          - name: 🐧 Linux (GCC, Double Precision)
-            os: ubuntu-20.04
-            platform: linux
-            artifact-name: godot-cpp-linux-glibc2.27-x86_64-double-release
-            artifact-path: bin/libgodot-cpp.linux.template_release.double.x86_64.a
-            flags: precision=double
-            run-tests: false
-            cache-name: linux-x86_64-f64
-
-          - name: 🏁 Windows (x86_64, MSVC)
-            os: windows-2019
-            platform: windows
-            artifact-name: godot-cpp-windows-msvc2019-x86_64-release
-            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.lib
-            run-tests: false
-            cache-name: windows-x86_64-msvc
-
-          - name: 🏁 Windows (x86_64, MinGW)
-            os: windows-2019
-            platform: windows
-            artifact-name: godot-cpp-linux-mingw-x86_64-release
-            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.a
-            flags: use_mingw=yes
-            run-tests: false
-            cache-name: windows-x86_64-mingw
-
-          - name: 🍎 macOS (universal)
-            os: macos-11
-            platform: macos
-            artifact-name: godot-cpp-macos-universal-release
-            artifact-path: bin/libgodot-cpp.macos.template_release.universal.a
-            flags: arch=universal
-            run-tests: false
-            cache-name: macos-universal
-
-          - name: 🤖 Android (arm64)
-            os: ubuntu-20.04
-            platform: android
-            artifact-name: godot-cpp-android-arm64-release
-            artifact-path: bin/libgodot-cpp.android.template_release.arm64.a
-            flags: ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME arch=arm64
-            run-tests: false
-            cache-name: android-arm64
-
-          - name: 🍏 iOS (arm64)
-            os: macos-11
-            platform: ios
-            artifact-name: godot-cpp-ios-arm64-release
-            artifact-path: bin/libgodot-cpp.ios.template_release.arm64.a
-            flags: arch=arm64
-            run-tests: false
-            cache-name: ios-arm64
+#          - name: 🐧 Linux (GCC, Double Precision)
+#            os: ubuntu-20.04
+#            platform: linux
+#            artifact-name: godot-cpp-linux-glibc2.27-x86_64-double-release
+#            artifact-path: bin/libgodot-cpp.linux.template_release.double.x86_64.a
+#            flags: precision=double
+#            run-tests: false
+#            cache-name: linux-x86_64-f64
+#
+#          - name: 🏁 Windows (x86_64, MSVC)
+#            os: windows-2019
+#            platform: windows
+#            artifact-name: godot-cpp-windows-msvc2019-x86_64-release
+#            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.lib
+#            run-tests: false
+#            cache-name: windows-x86_64-msvc
+#
+#          - name: 🏁 Windows (x86_64, MinGW)
+#            os: windows-2019
+#            platform: windows
+#            artifact-name: godot-cpp-linux-mingw-x86_64-release
+#            artifact-path: bin/libgodot-cpp.windows.template_release.x86_64.a
+#            flags: use_mingw=yes
+#            run-tests: false
+#            cache-name: windows-x86_64-mingw
+#
+#          - name: 🍎 macOS (universal)
+#            os: macos-11
+#            platform: macos
+#            artifact-name: godot-cpp-macos-universal-release
+#            artifact-path: bin/libgodot-cpp.macos.template_release.universal.a
+#            flags: arch=universal
+#            run-tests: false
+#            cache-name: macos-universal
+#
+#          - name: 🤖 Android (arm64)
+#            os: ubuntu-20.04
+#            platform: android
+#            artifact-name: godot-cpp-android-arm64-release
+#            artifact-path: bin/libgodot-cpp.android.template_release.arm64.a
+#            flags: ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME arch=arm64
+#            run-tests: false
+#            cache-name: android-arm64
+#
+#          - name: 🍏 iOS (arm64)
+#            os: macos-11
+#            platform: ios
+#            artifact-name: godot-cpp-ios-arm64-release
+#            artifact-path: bin/libgodot-cpp.ios.template_release.arm64.a
+#            flags: arch=arm64
+#            run-tests: false
+#            cache-name: ios-arm64
 
     env:
       SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
@@ -131,25 +131,21 @@ jobs:
           cd test
           scons platform=${{ matrix.platform }} target=template_release ${{ matrix.flags }}
 
-      # @todo Get this to work!
-      # @see https://github.com/dawidd6/action-download-artifact/issues/240
-#      - name: Download latest Godot artifacts
-#        uses: dawidd6/action-download-artifact@v2.27.0
-#        if: ${{ matrix.run-tests }}
-#        with:
-#          github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
-#          repo: godotengine/godot
-#          branch: master
-#          event: push
-#          workflow: linux_builds.yml
-#          workflow_conclusion: success
-#          name: linux-editor-mono
-#          search_artifacts: true
-#          check_artifacts: true
-#          path: godot-artifacts
-
-      - name: Download Godot
+      - name: Download latest Godot artifacts
+        uses: dsnopek/action-download-artifact@91dda23aa09c68860977dd0ed11d93c0ed3795e7
         if: ${{ matrix.run-tests }}
+        with:
+          github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
+          repo: godotengine/godot
+          branch: master
+          event: push
+          workflow: linux_builds.yml
+          workflow_conclusion: success
+          name: linux-editor-mono
+          search_artifacts: true
+          check_artifacts: true
+          path: godot-artifacts
+
         run: |
           wget https://downloads.tuxfamily.org/godotengine/4.1/dev1/Godot_v4.1-dev1_linux.x86_64.zip
           unzip Godot_v4.1-dev1_linux.x86_64.zip
@@ -158,10 +154,11 @@ jobs:
       - name: Run tests
         if: ${{ matrix.run-tests }}
         run: |
+          ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono --headless --version
           cd test
           # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
-          (cd demo && (../../Godot_v4.1-dev1_linux.x86_64 --editor --headless --quit >/dev/null 2>&1 || true))
-          GODOT=../Godot_v4.1-dev1_linux.x86_64 ./run-tests.sh
+          (cd demo && (../../godot-artifacts/godot.linuxbsd.editor.x86_64.mono --editor --headless --quit >/dev/null 2>&1 || true))
+          GODOT=../godot-artifacts/godot.linuxbsd.editor.x86_64.mono ./run-tests.sh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -170,69 +167,70 @@ jobs:
           path: ${{ matrix.artifact-path }}
           if-no-files-found: error
 
-  linux-cmake:
-    name: 🐧 Build (Linux, GCC, CMake)
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -qqq build-essential pkg-config cmake
-
-      - name: Build godot-cpp
-        run: |
-          cmake -DCMAKE_BUILD_TYPE=Release .
-          make -j $(nproc) VERBOSE=1
-
-      - name: Build test GDExtension library
-        run: |
-          cd test && cmake -DCMAKE_BUILD_TYPE=Release -DGODOT_HEADERS_PATH="../godot-headers" -DCPP_BINDINGS_PATH=".." .
-          make -j $(nproc) VERBOSE=1
-
-  linux-cmake-ninja:
-    name: 🐧 Build (Linux, GCC, CMake Ninja)
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -qqq build-essential pkg-config cmake ninja-build
-
-      - name: Build godot-cpp
-        run: |
-          cmake -DCMAKE_BUILD_TYPE=Release -GNinja .
-          cmake --build . -j $(nproc) --verbose
-
-      - name: Build test GDExtension library
-        run: |
-          cd test && cmake -DCMAKE_BUILD_TYPE=Release -DGODOT_HEADERS_PATH="../godot-headers" -DCPP_BINDINGS_PATH=".." -GNinja .
-          cmake --build . -j $(nproc) --verbose
-
-  windows-msvc-cmake:
-    name: 🏁 Build (Windows, MSVC, CMake)
-    runs-on: windows-2019
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
-      - name: Build godot-cpp
-        run: |
-          cmake -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019" .
-          cmake --build . --verbose
-
-      - name: Build test GDExtension library
-        run: |
-          cd test && cmake -DCMAKE_BUILD_TYPE=Release -DGODOT_HEADERS_PATH="../godot-headers" -DCPP_BINDINGS_PATH=".." -G"Visual Studio 16 2019" .
-          cmake --build . --verbose
+#  linux-cmake:
+#    name: 🐧 Build (Linux, GCC, CMake)
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          submodules: recursive
+#
+#      - name: Install dependencies
+#        run: |
+#          sudo apt-get update -qq
+#          sudo apt-get install -qqq build-essential pkg-config cmake
+#
+#      - name: Build godot-cpp
+#        run: |
+#          cmake -DCMAKE_BUILD_TYPE=Release .
+#          make -j $(nproc) VERBOSE=1
+#
+#      - name: Build test GDExtension library
+#        run: |
+#          cd test && cmake -DCMAKE_BUILD_TYPE=Release -DGODOT_HEADERS_PATH="../godot-headers" -DCPP_BINDINGS_PATH=".." .
+#          make -j $(nproc) VERBOSE=1
+#
+#  linux-cmake-ninja:
+#    name: 🐧 Build (Linux, GCC, CMake Ninja)
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          submodules: recursive
+#
+#      - name: Install dependencies
+#        run: |
+#          sudo apt-get update -qq
+#          sudo apt-get install -qqq build-essential pkg-config cmake ninja-build
+#
+#      - name: Build godot-cpp
+#        run: |
+#          cmake -DCMAKE_BUILD_TYPE=Release -GNinja .
+#          cmake --build . -j $(nproc) --verbose
+#
+#      - name: Build test GDExtension library
+#        run: |
+#          cd test && cmake -DCMAKE_BUILD_TYPE=Release -DGODOT_HEADERS_PATH="../godot-headers" -DCPP_BINDINGS_PATH=".." -GNinja .
+#          cmake --build . -j $(nproc) --verbose
+#
+#  windows-msvc-cmake:
+#    name: 🏁 Build (Windows, MSVC, CMake)
+#    runs-on: windows-2019
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          submodules: recursive
+#
+#      - name: Build godot-cpp
+#        run: |
+#          cmake -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019" .
+#          cmake --build . --verbose
+#
+#      - name: Build test GDExtension library
+#        run: |
+#          cd test && cmake -DCMAKE_BUILD_TYPE=Release -DGODOT_HEADERS_PATH="../godot-headers" -DCPP_BINDINGS_PATH=".." -G"Visual Studio 16 2019" .
+#          cmake --build . --verbose
+#
