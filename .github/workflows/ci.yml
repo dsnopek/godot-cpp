@@ -144,17 +144,17 @@ jobs:
           cd test
           scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }} build_library=no
 
-      - name: Run tests
-        if: ${{ matrix.run-tests }}
-        run: |
-          cd test/demo
-          cat /proc/cpuinfo
-          ../../Godot_v4.1-dev1_linux.x86_64 --headless --quit
-
       - name: Build test and godot-cpp (release)
         run: |
           cd test
           scons platform=${{ matrix.platform }} target=template_release ${{ matrix.flags }}
+
+      - name: Run tests
+        if: ${{ matrix.run-tests }}
+        run: |
+          cd test/demo
+          ../../Godot_v4.1-dev1_linux.x86_64 --headless --quit
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
