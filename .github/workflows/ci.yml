@@ -158,10 +158,10 @@ jobs:
       - name: Run tests
         if: ${{ matrix.run-tests }}
         run: |
-          cd test/demo
+          cd test
           # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
-          ../../Godot_v4.1-dev1_linux.x86_64 --editor --headless --quit >/dev/null 2>&1 || true
-          ../../Godot_v4.1-dev1_linux.x86_64 --headless --quit
+          (cd demo && (../../Godot_v4.1-dev1_linux.x86_64 --editor --headless --quit >/dev/null 2>&1 || true))
+          GODOT=../Godot_v4.1-dev1_linux.x86_64 ./run-tests.sh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
