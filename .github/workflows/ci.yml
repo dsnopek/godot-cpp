@@ -122,6 +122,7 @@ jobs:
           scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }}
 
       # @todo Get this to work!
+      # @see https://github.com/dawidd6/action-download-artifact/issues/240
 #      - name: Download latest Godot artifacts
 #        uses: dawidd6/action-download-artifact@v2.27.0
 #        if: ${{ matrix.run-tests }}
@@ -147,6 +148,7 @@ jobs:
         if: ${{ matrix.run-tests }}
         run: |
           cd test/demo
+          ../../Godot_v4.1-dev1_linux.x86_64 --headless --quit
           ../../Godot_v4.1-dev1_linux.x86_64 --headless --quit
 
       - name: Build test and godot-cpp (release)
