@@ -121,6 +121,11 @@ jobs:
 #        run: |
 #          scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }}
 #
+      - name: List actions
+        if: ${{ matrix.run-tests }}
+        run: |
+          ls ./github-actions/action-download-artifact/
+
       # @todo Get this to work!
       - name: Download latest Godot artifacts
         uses: ./github-actions/action-download-artifact/
