@@ -5,7 +5,7 @@ GODOT=${GODOT:-godot}
 END_STRING="==== TESTS FINISHED ===="
 FAILURE_STRING="******** FAILED ********"
 
-OUTPUT=$($GODOT --path demo --headless --quit)
+OUTPUT=$($GODOT --path demo --debug --headless --quit)
 ERRCODE=$?
 
 echo "$OUTPUT"
