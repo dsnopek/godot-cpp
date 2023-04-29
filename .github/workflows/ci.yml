@@ -146,11 +146,6 @@ jobs:
           check_artifacts: true
           path: godot-artifacts
 
-        run: |
-          wget https://downloads.tuxfamily.org/godotengine/4.1/dev1/Godot_v4.1-dev1_linux.x86_64.zip
-          unzip Godot_v4.1-dev1_linux.x86_64.zip
-          ./Godot_v4.1-dev1_linux.x86_64 --version --headless
-
       - name: Run tests
         if: ${{ matrix.run-tests }}
         run: |
