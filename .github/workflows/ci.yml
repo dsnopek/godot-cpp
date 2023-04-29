@@ -124,7 +124,7 @@ jobs:
       - name: List actions
         if: ${{ matrix.run-tests }}
         run: |
-          ls ./github-actions/action-download-artifact/
+          ls ./github-actions/
 
       # @todo Get this to work!
       - name: Download latest Godot artifacts
