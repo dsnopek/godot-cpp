@@ -152,7 +152,9 @@ jobs:
       - name: Run tests
         if: ${{ matrix.run-tests }}
         run: |
+          pwd
           cd test/demo
+          pwd
           ../../Godot_v4.1-dev1_linux.x86_64 --headless --quit
 
 
