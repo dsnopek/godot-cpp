@@ -128,7 +128,7 @@ jobs:
 
       # @todo Get this to work!
       - name: Download latest Godot artifacts
-        uses: dsnopek/action-download-artifact@latest-workflow-run-for-repo
+        uses: dsnopek/action-download-artifact@91dda23aa09c68860977dd0ed11d93c0ed3795e7
         if: ${{ matrix.run-tests }}
         with:
           github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
