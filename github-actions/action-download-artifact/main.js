@@ -115,10 +115,13 @@ async function main() {
             }
             )) {
                 for (const run of runs.data) {
+                    console.log(run);
                     if (runNumber && run.run_number != runNumber) {
+                        console.log("Continue because of runNumber");
                         continue
                     }
                     if (workflowConclusion && (workflowConclusion != run.conclusion && workflowConclusion != run.status)) {
+                        console.log("Continue because of conclusion");
                         continue
                     }
                     if (checkArtifacts || searchArtifacts) {
@@ -128,6 +131,7 @@ async function main() {
                             run_id: run.id,
                         })
                         if (!artifacts || artifacts.length == 0) {
+                            console.log("Continue because no artifacts");
                             continue
                         }
                         if (searchArtifacts) {
@@ -138,6 +142,7 @@ async function main() {
                                 return artifact.name == name
                             })
                             if (!artifact) {
+                                console.log("Continue because no matching artifacts");
                                 continue
                             }
                         }
