@@ -121,6 +121,16 @@ jobs:
         run: |
           scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }}
 
+      - name: Build test without rebuilding godot-cpp (debug)
+        run: |
+          cd test
+          scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }} build_library=no
+
+      - name: Build test and godot-cpp (release)
+        run: |
+          cd test
+          scons platform=${{ matrix.platform }} target=template_release ${{ matrix.flags }}
+
       # @todo Get this to work!
       # @see https://github.com/dawidd6/action-download-artifact/issues/240
 #      - name: Download latest Godot artifacts
@@ -139,16 +149,6 @@ jobs:
           unzip Godot_v4.1-dev1_linux.x86_64.zip
           ./Godot_v4.1-dev1_linux.x86_64 --version --headless
 
-      - name: Build test without rebuilding godot-cpp (debug)
-        run: |
-          cd test
-          scons platform=${{ matrix.platform }} target=template_debug ${{ matrix.flags }} build_library=no
-
-      - name: Build test and godot-cpp (release)
-        run: |
-          cd test
-          scons platform=${{ matrix.platform }} target=template_release ${{ matrix.flags }}
-
       - name: Run tests
         if: ${{ matrix.run-tests }}
         run: |
@@ -156,7 +156,6 @@ jobs:
           # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
           ../../Godot_v4.1-dev1_linux.x86_64 --editor --headless --quit >/dev/null 2>&1 || true
           ../../Godot_v4.1-dev1_linux.x86_64 --headless --quit
-
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
