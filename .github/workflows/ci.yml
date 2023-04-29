@@ -82,11 +82,11 @@ jobs:
       SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
 
     steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          submodules: recursive
-#
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
 #      - name: Setup Godot build cache
 #        uses: ./.github/actions/godot-cache
 #        with:
