@@ -131,30 +131,30 @@ jobs:
           cd test
           scons platform=${{ matrix.platform }} target=template_release ${{ matrix.flags }}
 
-#      - name: Download latest Godot artifacts
-#        uses: dsnopek/action-download-artifact@91dda23aa09c68860977dd0ed11d93c0ed3795e7
-#        if: ${{ matrix.run-tests }}
-#        with:
-#          github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
-#          repo: godotengine/godot
-#          branch: master
-#          event: push
-#          workflow: linux_builds.yml
-#          workflow_conclusion: success
-#          name: linux-editor-mono
-#          search_artifacts: true
-#          check_artifacts: true
-#          path: godot-artifacts
-#
-#      - name: Run tests
-#        if: ${{ matrix.run-tests }}
-#        run: |
-#          chmod +x ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono
-#          ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono --headless --version
-#          cd test
-#          # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
-#          (cd demo && (../../godot-artifacts/godot.linuxbsd.editor.x86_64.mono --editor --headless --quit >/dev/null 2>&1 || true))
-#          GODOT=../godot-artifacts/godot.linuxbsd.editor.x86_64.mono ./run-tests.sh
+      - name: Download latest Godot artifacts
+        uses: dsnopek/action-download-artifact@91dda23aa09c68860977dd0ed11d93c0ed3795e7
+        if: ${{ matrix.run-tests }}
+        with:
+          github_token: ${{ secrets.GODOT_ACCESS_TOKEN }}
+          repo: godotengine/godot
+          branch: master
+          event: push
+          workflow: linux_builds.yml
+          workflow_conclusion: success
+          name: linux-editor-mono
+          search_artifacts: true
+          check_artifacts: true
+          path: godot-artifacts
+
+      - name: Run tests
+        if: ${{ matrix.run-tests }}
+        run: |
+          chmod +x ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono
+          ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono --headless --version
+          cd test
+          # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
+          (cd demo && (../../godot-artifacts/godot.linuxbsd.editor.x86_64.mono --editor --headless --quit >/dev/null 2>&1 || true))
+          GODOT=../godot-artifacts/godot.linuxbsd.editor.x86_64.mono ./run-tests.sh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
