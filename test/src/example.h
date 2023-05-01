@@ -17,6 +17,7 @@
 #include <godot_cpp/classes/control.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/viewport.hpp>
+#include <godot_cpp/classes/image.hpp>
 
 #include <godot_cpp/core/binder_common.hpp>
 
@@ -38,6 +39,7 @@ public:
 	ExampleRef();
 	~ExampleRef();
 
+	void set_id(int p_id);
 	int get_id() const;
 };
 
@@ -90,8 +92,13 @@ public:
 	// Functions.
 	void simple_func();
 	void simple_const_func() const;
+	int custom_ref_func(Ref<ExampleRef> p_ref);
+	int custom_const_ref_func(const Ref<ExampleRef> &p_ref);
+	String image_ref_func(Ref<Image> p_image);
+	String image_const_ref_func(const Ref<Image> &p_image);
 	String return_something(const String &base);
 	Viewport *return_something_const() const;
+	Ref<ExampleRef> return_ref() const;
 	Ref<ExampleRef> return_empty_ref() const;
 	ExampleRef *return_extended_ref() const;
 	Ref<ExampleRef> extended_ref_checks(Ref<ExampleRef> p_ref) const;

@@ -22,24 +22,41 @@ func _ready():
 	$Example.property_from_list = Vector3(100, 200, 300)
 	assert_equal($Example.property_from_list, Vector3(100, 200, 300))
 
-	# Call methods.
+	# Call simple methods.
 	$Example.simple_func()
 	assert_equal(custom_signal_emitted, ['simple_func', 3])
 	($Example as Example).simple_const_func() # Force use of ptrcall
 	assert_equal(custom_signal_emitted, ['simple_const_func', 4])
+
+	# Pass custom reference.
+	assert_equal($Example.custom_ref_func(null), -1)
+	var ref1 = ExampleRef.new()
+	ref1.id = 27
+	assert_equal($Example.custom_ref_func(ref1), 27)
+	ref1.id += 1;
+	assert_equal($Example.custom_const_ref_func(ref1), 28)
+
+	# Pass core reference.
+	assert_equal($Example.image_ref_func(null), "invalid")
+	assert_equal($Example.image_const_ref_func(null), "invalid")
+	var image = Image.new()
+	assert_equal($Example.image_ref_func(image), "valid")
+	assert_equal($Example.image_const_ref_func(image), "valid")
+
+	# Return values.
 	assert_equal($Example.return_something("some string"), "some string42")
 	assert_equal($Example.return_something_const(), get_viewport())
 	var null_ref = $Example.return_empty_ref()
 	assert_equal(null_ref, null)
 	var ret_ref = $Example.return_extended_ref()
 	assert_not_equal(ret_ref.get_instance_id(), 0)
-	assert_not_equal(ret_ref.get_id(), 0)
+	assert_equal(ret_ref.get_id(), 0)
 	assert_equal($Example.get_v4(), Vector4(1.2, 3.4, 5.6, 7.8))
 	assert_equal($Example.test_node_argument($Example), $Example)
 
 	# VarArg method calls.
-	var ref = ExampleRef.new()
-	assert_not_equal($Example.extended_ref_checks(ref).get_instance_id(), ref.get_instance_id())
+	var var_ref = ExampleRef.new()
+	assert_not_equal($Example.extended_ref_checks(var_ref).get_instance_id(), var_ref.get_instance_id())
 	assert_equal($Example.varargs_func("some", "arguments", "to", "test"), 4)
 	assert_equal($Example.varargs_func_nv("some", "arguments", "to", "test"), 46)
 	$Example.varargs_func_void("some", "arguments", "to", "test")

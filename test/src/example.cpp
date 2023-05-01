@@ -13,27 +13,26 @@
 
 using namespace godot;
 
-int ExampleRef::instance_count = 0;
-int ExampleRef::last_id = 0;
+void ExampleRef::set_id(int p_id) {
+	id = p_id;
+}
 
 int ExampleRef::get_id() const {
 	return id;
 }
 
 void ExampleRef::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_id", "id"), &ExampleRef::set_id);
 	ClassDB::bind_method(D_METHOD("get_id"), &ExampleRef::get_id);
+
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "id"), "set_id", "get_id");
 }
 
 ExampleRef::ExampleRef() {
-	id = ++last_id;
-	instance_count++;
-
-	//UtilityFunctions::print("ExampleRef ", itos(id), " created, current instance count: ", itos(instance_count));
+	id = 0;
 }
 
 ExampleRef::~ExampleRef() {
-	instance_count--;
-	//UtilityFunctions::print("ExampleRef ", itos(id), " destroyed, current instance count: ", itos(instance_count));
 }
 
 int Example::test_static(int p_a, int p_b) {
@@ -112,6 +111,10 @@ void Example::_bind_methods() {
 	// Methods.
 	ClassDB::bind_method(D_METHOD("simple_func"), &Example::simple_func);
 	ClassDB::bind_method(D_METHOD("simple_const_func"), &Example::simple_const_func);
+	ClassDB::bind_method(D_METHOD("custom_ref_func", "ref"), &Example::custom_ref_func);
+	ClassDB::bind_method(D_METHOD("custom_const_ref_func", "ref"), &Example::custom_const_ref_func);
+	ClassDB::bind_method(D_METHOD("image_ref_func", "image"), &Example::image_ref_func);
+	ClassDB::bind_method(D_METHOD("image_const_ref_func", "image"), &Example::image_const_ref_func);
 	ClassDB::bind_method(D_METHOD("return_something"), &Example::return_something);
 	ClassDB::bind_method(D_METHOD("return_something_const"), &Example::return_something_const);
 	ClassDB::bind_method(D_METHOD("return_empty_ref"), &Example::return_empty_ref);
@@ -193,6 +196,22 @@ void Example::simple_func() {
 
 void Example::simple_const_func() const {
 	((Example *)this)->emit_custom_signal("simple_const_func", 4);
+}
+
+int Example::custom_ref_func(Ref<ExampleRef> p_ref) {
+	return p_ref.is_valid() ? p_ref->get_id() : -1;
+}
+
+int Example::custom_const_ref_func(const Ref<ExampleRef> &p_ref) {
+	return p_ref.is_valid() ? p_ref->get_id() : -1;
+}
+
+String Example::image_ref_func(Ref<Image> p_image) {
+	return p_image.is_valid() ? String("valid") : String("invalid");
+}
+
+String Example::image_const_ref_func(const Ref<Image> &p_image) {
+	return p_image.is_valid() ? String("valid") : String("invalid");
 }
 
 String Example::return_something(const String &base) {
