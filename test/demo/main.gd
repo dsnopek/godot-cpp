@@ -27,7 +27,7 @@ func _ready():
 	assert_equal(custom_signal_emitted, ['simple_func', 3])
 	($Example as Example).simple_const_func() # Force use of ptrcall
 	assert_equal(custom_signal_emitted, ['simple_const_func', 4])
-	assert_equal($Example.return_something("some string"), "some string")
+	assert_equal($Example.return_something("some string"), "some string42")
 	assert_equal($Example.return_something_const(), get_viewport())
 	var null_ref = $Example.return_empty_ref()
 	assert_equal(null_ref, null)
