@@ -1800,47 +1800,57 @@ typedef GDExtensionVariantPtr (*GDExtensionInterfaceDictionaryOperatorIndexConst
 /**
  * @name object_method_bind_call
  *
- * @param p_method_bind
- * @param p_instance
- * @param p_args
- * @param p_arg_count
- * @param r_ret
- * @param r_error
+ * Calls a method on an Object.
+ *
+ * @param p_method_bind A pointer to the MethodBind representing the method on the Object's class.
+ * @param p_instance A pointer to the Object.
+ * @param p_args A pointer to a C array of Variants representing the arguments.
+ * @param p_arg_count The number of arguments.
+ * @param r_ret A pointer to Variant which will receive the return value.
+ * @param r_error A pointer to a GDExtensionCallError struct that will receive error information.
  */
 typedef void (*GDExtensionInterfaceObjectMethodBindCall)(GDExtensionMethodBindPtr p_method_bind, GDExtensionObjectPtr p_instance, const GDExtensionConstVariantPtr *p_args, GDExtensionInt p_arg_count, GDExtensionVariantPtr r_ret, GDExtensionCallError *r_error);
 
 /**
  * @name object_method_bind_ptrcall
  *
- * @param p_method_bind
- * @param p_instance
- * @param p_args
- * @param r_ret
+ * Calls a method on an Object (using a "ptrcall").
+ *
+ * @param p_method_bind A pointer to the MethodBind representing the method on the Object's class.
+ * @param p_instance A pointer to the Object.
+ * @param p_args A pointer to a C array representing the arguments.
+ * @param r_ret A pointer to the Object that will receive the return value.
  */
 typedef void (*GDExtensionInterfaceObjectMethodBindPtrcall)(GDExtensionMethodBindPtr p_method_bind, GDExtensionObjectPtr p_instance, const GDExtensionConstTypePtr *p_args, GDExtensionTypePtr r_ret);
 
 /**
  * @name object_destroy
  *
- * @param p_o
+ * Destroys an Object.
+ *
+ * @param p_o A pointer to the Object.
  */
 typedef void (*GDExtensionInterfaceObjectDestroy)(GDExtensionObjectPtr p_o);
 
 /**
  * @name global_get_singleton
  *
- * @param p_name
+ * Gets a global singleton by name.
  *
- * @return
+ * @param p_name A pointer to a StringName with the singleton name.
+ *
+ * @return A pointer to the singleton Object.
  */
 typedef GDExtensionObjectPtr (*GDExtensionInterfaceGlobalGetSingleton)(GDExtensionConstStringNamePtr p_name);
 
 /**
  * @name object_get_instance_binding
  *
- * @param p_o
- * @param p_token
- * @param p_callbacks
+ * Gets a pointer representing an Object's instance binding.
+ *
+ * @param p_o A pointer to the Object.
+ * @param p_library A token the library received by the GDExtension's entry point function.
+ * @param p_callbacks A pointer to a GDExtensionInstanceBindingCallbacks struct.
  *
  * @return
  */
@@ -1849,47 +1859,57 @@ typedef void *(*GDExtensionInterfaceObjectGetInstanceBinding)(GDExtensionObjectP
 /**
  * @name object_set_instance_binding
  *
- * @param p_o
- * @param p_token
- * @param p_binding
- * @param p_callbacks
+ * Sets an Object's instance binding.
+ *
+ * @param p_o A pointer to the Object.
+ * @param p_library A token the library received by the GDExtension's entry point function.
+ * @param p_binding A pointer to the instance binding.
+ * @param p_callbacks A pointer to a GDExtensionInstanceBindingCallbacks struct.
  */
 typedef void (*GDExtensionInterfaceObjectSetInstanceBinding)(GDExtensionObjectPtr p_o, void *p_token, void *p_binding, const GDExtensionInstanceBindingCallbacks *p_callbacks);
 
 /**
  * @name object_set_instance
  *
- * @param p_o
- * @param p_classname
- * @param p_instance
+ * Sets an extension class instance on a Object.
+ *
+ * @param p_o A pointer to the Object.
+ * @param p_classname A pointer to a StringName with the registered extension class's name.
+ * @param p_instance A pointer to the extension class instance.
  */
 typedef void (*GDExtensionInterfaceObjectSetInstance)(GDExtensionObjectPtr p_o, GDExtensionConstStringNamePtr p_classname, GDExtensionClassInstancePtr p_instance); /* p_classname should be a registered extension class and should extend the p_o object's class. */
 
 /**
  * @name object_cast_to
  *
- * @param p_object
- * @param p_class_tag
+ * Casts an Object to a different type.
  *
- * @return
+ * @param p_object A pointer to the Object.
+ * @param p_class_tag A pointer uniquely identifying a built-in class in the ClassDB.
+ *
+ * @return Returns a pointer to the Object, or NULL if it can't be cast to the requested type.
  */
 typedef GDExtensionObjectPtr (*GDExtensionInterfaceObjectCastTo)(GDExtensionConstObjectPtr p_object, void *p_class_tag);
 
 /**
  * @name object_get_instance_from_id
  *
- * @param p_instance_id
+ * Gets an Object by its instance ID.
  *
- * @return
+ * @param p_instance_id The instance ID.
+ *
+ * @return A pointer to the Object.
  */
 typedef GDExtensionObjectPtr (*GDExtensionInterfaceObjectGetInstanceFromId)(GDObjectInstanceID p_instance_id);
 
 /**
  * @name object_get_instance_id
  *
- * @param p_object
+ * Gets the instance ID from an Object.
  *
- * @return
+ * @param p_object A pointer to the Object.
+ *
+ * @return The instance ID.
  */
 typedef GDObjectInstanceID (*GDExtensionInterfaceObjectGetInstanceId)(GDExtensionConstObjectPtr p_object);
 
