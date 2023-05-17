@@ -114,7 +114,7 @@ async function main() {
                 ...(commit ? { head_sha: commit } : {}),
             }
             )) {
-                let latestCreatedAt = null;
+                let runCreatedAt = null;
                 for (const run of runs.data) {
                     if (runNumber && run.run_number != runNumber) {
                         continue
@@ -144,18 +144,19 @@ async function main() {
                         }
                     }
                     if (ensureLatest) {
-                        if (latestCreatedAt === null || ((new Date(run.created_at)) > (new Date(latestCreatedAt)))) {
+                        if (runCreatedAt === null || ((new Date(run.created_at)) > (new Date(runCreatedAt)))) {
                             runID = run.id;
-                            latestCreatedAt = run.created_at;
+                            runCreatedAt = run.created_at;
                         }
                         continue;
                     }
                     runID = run.id
+                    runCreatedAt = run.created_at;
                     break
                 }
                 if (runID) {
                     core.info(`==> (found) Run ID: ${runID}`)
-                    core.info(`==> (found) Run date: ${run.created_at}`)
+                    core.info(`==> (found) Run date: ${runCreatedAt}`)
                     break
                 }
             }
