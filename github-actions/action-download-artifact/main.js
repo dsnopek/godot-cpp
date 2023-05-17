@@ -105,7 +105,7 @@ async function main() {
 
         if (!runID) {
             // Note that the runs are returned in most recent first order.
-            for await (const runs of client.paginate.iterator(client.rest.actions.listWorkflowRunsForRepo, {
+            for await (const runs of client.paginate.iterator(client.rest.actions.listWorkflowRuns, {
                 owner: owner,
                 repo: repo,
                 workflow_id: workflow,
