@@ -70,6 +70,26 @@ def generate_wrappers(target):
         f.write(txt)
 
 
+def generate_version(target, header):
+    txt = """
+#ifndef GDEXTENSION_VERSION_GEN_H
+#define GDEXTENSION_VERSION_GEN_H
+
+"""
+
+    txt += "#define GDEXTENSION_API_VERSION_MAJOR %s\n" % header['version_major']
+    txt += "#define GDEXTENSION_API_VERSION_MINOR %s\n" % header['version_minor']
+    txt += "#define GDEXTENSION_API_VERSION_PATCH %s\n" % header['version_patch']
+    txt += "#define GDEXTENSION_API_VERSION_STATUS \"%s\"\n" % header['version_status']
+    txt += "#define GDEXTENSION_API_VERSION_BUILD \"%s\"\n" % header['version_build']
+    txt += "#define GDEXTENSION_API_VERSION_FULL_NAME \"%s\"\n" % header['version_full_name']
+
+    txt += "\n#endif\n"
+
+    with open(target, "w") as f:
+        f.write(txt)
+
+
 def get_file_list(api_filepath, output_dir, headers=False, sources=False):
     api = {}
     files = []
@@ -81,6 +101,7 @@ def get_file_list(api_filepath, output_dir, headers=False, sources=False):
     source_gen_folder = Path(output_dir) / "gen" / "src"
 
     files.append(str((core_gen_folder / "ext_wrappers.gen.inc").as_posix()))
+    files.append(str((core_gen_folder / "ext_version.gen.hpp").as_posix()))
 
     for builtin_class in api["builtin_classes"]:
         if is_pod_type(builtin_class["name"]):
@@ -200,6 +221,7 @@ def generate_builtin_bindings(api, output_dir, build_config):
     source_gen_folder.mkdir(parents=True, exist_ok=True)
 
     generate_wrappers(core_gen_folder / "ext_wrappers.gen.inc")
+    generate_version(core_gen_folder / "ext_version.gen.hpp", api["header"])
 
     # Store types beforehand.
     for builtin_api in api["builtin_classes"]:
