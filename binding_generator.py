@@ -121,7 +121,6 @@ def get_file_list(api_filepath, output_dir, headers=False, sources=False):
             include_gen_folder / "variant" / "builtin_binds.hpp",
             include_gen_folder / "variant" / "utility_functions.hpp",
             include_gen_folder / "variant" / "variant_size.hpp",
-            include_gen_folder / "variant" / "builtin_vararg_methods.hpp",
             include_gen_folder / "classes" / "global_constants.hpp",
             include_gen_folder / "classes" / "global_constants_binds.hpp",
         ]:
@@ -345,101 +344,72 @@ def generate_builtin_bindings(api, output_dir, build_config):
 
         builtin_binds_file.write("\n".join(builtin_binds))
 
-    # Craete a header to implement all builin class vararg methods and be included in `variant.hpp``.
-    builtin_vararg_methods_header = include_gen_folder / "builtin_vararg_methods.hpp"
-    builtin_vararg_methods_header.open("w+").write(
-        generate_builtin_class_vararg_method_implements_header(api["builtin_classes"])
+def generate_builtin_class_vararg_method(result, class_name, method):
+    need_return = "return_type" in method
+
+    result.append("template<class... Args>")
+    method_signature = ""
+    if need_return:
+        method_signature += f'{correct_type(method["return_type"])} '
+    else:
+        method_signature += "void "
+
+    method_name = method["name"]
+    method_signature += f"{class_name}::{method_name}("
+
+    method_arguments = []
+    if "arguments" in method:
+        method_arguments = method["arguments"]
+
+    method_signature += make_function_parameters(
+        method_arguments, include_default=False, for_builtin=True, is_vararg=True
     )
 
+    method_signature += ")"
+    if method["is_const"]:
+        method_signature += " const"
 
-def generate_builtin_class_vararg_method_implements_header(builtin_classes):
-    result = []
+    method_signature += "{"
+    result.append(method_signature)
 
-    add_header("builtin_vararg_methods.hpp", result)
+    arguments = []
+    if "arguments" in method:
+        for argument in method["arguments"]:
+            arguments.append(escape_identifier(argument["name"]))
 
-    header_guard = "GODOT_CPP_BUILTIN_VARARG_METHODS_HPP"
-    result.append(f"#ifndef {header_guard}")
-    result.append(f"#define {header_guard}")
-    for builtin_api in builtin_classes:
-        if not "methods" in builtin_api:
-            continue
-        class_name = builtin_api["name"]
-        for method in builtin_api["methods"]:
-            if not method["is_vararg"]:
-                continue
+    need_return = "return_type" in method
 
-            need_return = "return_type" in method
-
-            result.append("template<class... Args>")
-            method_signature = ""
-            if need_return:
-                method_signature += f'{correct_type(method["return_type"])} '
-            else:
-                method_signature += "void "
-
-            method_name = method["name"]
-            method_signature += f"{class_name}::{method_name}("
-
-            method_arguments = []
-            if "arguments" in method:
-                method_arguments = method["arguments"]
-
-            method_signature += make_function_parameters(
-                method_arguments, include_default=False, for_builtin=True, is_vararg=True
-            )
-
-            method_signature += ")"
-            if method["is_const"]:
-                method_signature += " const"
-
-            method_signature += "{"
-            result.append(method_signature)
-
-            arguments = []
-            if "arguments" in method:
-                for argument in method["arguments"]:
-                    arguments.append(escape_identifier(argument["name"]))
-
-            need_return = "return_type" in method
-
-            variant_args = f"\tstd::array<Variant, {len(arguments)} + sizeof...(Args)> variant_args = " + "{ { "
-            if len(arguments) > 0:
-                for i in range(len(arguments)):
-                    if i > 0:
-                        variant_args += ", "
-                    variant_args += f"Variant({arguments[i]})"
+    variant_args = f"\tstd::array<Variant, {len(arguments)} + sizeof...(Args)> variant_args = " + "{ { "
+    if len(arguments) > 0:
+        for i in range(len(arguments)):
+            if i > 0:
                 variant_args += ", "
-            variant_args += "(Variant(args))... } };"
-            result.append(variant_args)
-            result.append(f"\tstd::array<const Variant *, {len(arguments)} + sizeof...(Args)> call_args;")
-            result.append(f"\tfor (size_t i = 0; i < ({len(arguments)} + sizeof...(Args)); ++i) " + "{")
-            result.append("\t\tcall_args[i] = &variant_args[i];")
-            result.append("\t}")
+            variant_args += f"Variant({arguments[i]})"
+        variant_args += ", "
+    variant_args += "(Variant(args))... } };"
+    result.append(variant_args)
+    result.append(f"\tstd::array<const Variant *, {len(arguments)} + sizeof...(Args)> call_args;")
+    result.append(f"\tfor (size_t i = 0; i < ({len(arguments)} + sizeof...(Args)); ++i) " + "{")
+    result.append("\t\tcall_args[i] = &variant_args[i];")
+    result.append("\t}")
 
-            base = "(GDExtensionTypePtr)&opaque"
-            if "is_static" in method and method["is_static"]:
-                base = "nullptr"
+    base = "(GDExtensionTypePtr)&opaque"
+    if "is_static" in method and method["is_static"]:
+        base = "nullptr"
 
-            ret = "nullptr"
-            if need_return:
-                ret = "&ret"
-                result.append(f'\t{correct_type(method["return_type"])} ret;')
+    ret = "nullptr"
+    if need_return:
+        ret = "&ret"
+        result.append(f'\t{correct_type(method["return_type"])} ret;')
 
-            result.append(
-                f"\t_method_bindings.method_{method_name}({base}, reinterpret_cast<GDExtensionConstTypePtr *>(call_args.data()), {ret}, {len(arguments)} + sizeof...(Args));"
-            )
+    result.append(
+        f"\t_method_bindings.method_{method_name}({base}, reinterpret_cast<GDExtensionConstTypePtr *>(call_args.data()), {ret}, {len(arguments)} + sizeof...(Args));"
+    )
 
-            if need_return:
-                result.append("\treturn ret;")
+    if need_return:
+        result.append("\treturn ret;")
 
-            result.append("}")
-            result.append("")
-
-    result.append("")
-    result.append(f"#endif // ! {header_guard}")
-
-    return "\n".join(result)
-
+    result.append("}")
 
 def generate_builtin_class_header(builtin_api, size, used_classes, fully_used_classes):
     result = []
@@ -483,6 +453,16 @@ def generate_builtin_class_header(builtin_api, size, used_classes, fully_used_cl
 
     if len(fully_used_classes) > 0:
         result.append("")
+
+    has_vararg_methods = False
+    if "methods" in builtin_api:
+        for method in builtin_api["methods"]:
+            if method['is_vararg']:
+                has_vararg_methods = True
+                break
+    if has_vararg_methods:
+        result.append("#include <array>")
+        used_classes.append("Variant");
 
     result.append("#include <gdextension_interface.h>")
     result.append("")
@@ -822,6 +802,15 @@ def generate_builtin_class_header(builtin_api, size, used_classes, fully_used_cl
         result.append("String uitos(uint64_t p_val);")
         result.append("String rtos(double p_val);")
         result.append("String rtoss(double p_val);")
+
+    # Add vararg method implementations.
+    if "methods" in builtin_api:
+        for method in builtin_api["methods"]:
+            if not method["is_vararg"]:
+                continue
+
+            result.append("");
+            generate_builtin_class_vararg_method(result, class_name, method)
 
     result.append("")
     result.append("} // namespace godot")
