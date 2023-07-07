@@ -280,10 +280,6 @@ CharWideString String::wide_string() const {
 	return CharWideString(cstr, length);
 }
 
-Error String::resize(int p_size) {
-	return (Error)internal::gdextension_interface_string_resize(_native_ptr(), p_size);
-}
-
 String &String::operator=(const char *p_str) {
 	*this = String(p_str);
 	return *this;
