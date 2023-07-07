@@ -82,6 +82,9 @@ func _ready():
 	# UtilityFunctions::str()
 	assert_equal(example.test_str_utility(), "Hello, World! The answer is 42")
 
+	# String::resize().
+	assert_equal(example.test_string_resize("What"), "What!?")
+
 	# PackedArray iterators
 	assert_equal(example.test_vector_ops(), 105)
 

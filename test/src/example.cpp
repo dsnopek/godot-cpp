@@ -128,6 +128,7 @@ void Example::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("test_node_argument"), &Example::test_node_argument);
 	ClassDB::bind_method(D_METHOD("test_string_ops"), &Example::test_string_ops);
 	ClassDB::bind_method(D_METHOD("test_str_utility"), &Example::test_str_utility);
+	ClassDB::bind_method(D_METHOD("test_string_resize"), &Example::test_string_resize);
 	ClassDB::bind_method(D_METHOD("test_vector_ops"), &Example::test_vector_ops);
 
 	ClassDB::bind_method(D_METHOD("test_bitfield", "flags"), &Example::test_bitfield);
@@ -283,6 +284,16 @@ String Example::test_string_ops() const {
 
 String Example::test_str_utility() const {
 	return UtilityFunctions::str("Hello, ", "World", "! The answer is ", 42);
+}
+
+String Example::test_string_resize(String p_string) const {
+	int orig_len = p_string.length();
+	p_string.resize(orig_len + 3);
+	char32_t *data = p_string.ptrw();
+	data[orig_len + 0] = '!';
+	data[orig_len + 1] = '?';
+	data[orig_len + 2] = '\0';
+	return p_string;
 }
 
 int Example::test_vector_ops() const {
