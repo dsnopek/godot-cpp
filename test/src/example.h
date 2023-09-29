@@ -193,4 +193,20 @@ protected:
 	static void _bind_methods() {}
 };
 
+class ExampleGameplay : public Node {
+	GDCLASS(ExampleGameplay, Node);
+
+	int prop_value = 12;
+
+protected:
+	static void _bind_methods();
+
+public:
+	void set_prop_value(int p_prop_value);
+	int get_prop_value() const;
+
+	ExampleGameplay();
+	~ExampleGameplay();
+};
+
 #endif // EXAMPLE_CLASS_H

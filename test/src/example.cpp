@@ -523,3 +523,23 @@ void Example::_input(const Ref<InputEvent> &event) {
 		emit_custom_signal(String("_input: ") + key_event->get_key_label(), key_event->get_unicode());
 	}
 }
+
+void ExampleGameplay::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_prop_value", "value"), &ExampleGameplay::set_prop_value);
+	ClassDB::bind_method(D_METHOD("get_prop_value"), &ExampleGameplay::get_prop_value);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "prop_value"), "set_prop_value", "get_prop_value");
+}
+
+void ExampleGameplay::set_prop_value(int p_prop_value) {
+	prop_value = p_prop_value;
+}
+
+int ExampleGameplay::get_prop_value() const {
+	return prop_value;
+}
+
+ExampleGameplay::ExampleGameplay() {
+}
+
+ExampleGameplay::~ExampleGameplay() {
+}
