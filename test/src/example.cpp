@@ -538,6 +538,10 @@ int ExampleGameplay::get_prop_value() const {
 	return prop_value;
 }
 
+void ExampleGameplay::_process(double p_delta) {
+	UtilityFunctions::print("Hello from gameplay!");
+}
+
 ExampleGameplay::ExampleGameplay() {
 }
 

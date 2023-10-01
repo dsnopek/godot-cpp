@@ -22,4 +22,7 @@ offset_right = 79.0
 offset_bottom = 29.0
 text = "Click me!"
 
+[node name="ExampleGameplay" type="ExampleGameplay" parent="."]
+prop_value = 33
+
 [connection signal="custom_signal" from="Example" to="." method="_on_Example_custom_signal"]

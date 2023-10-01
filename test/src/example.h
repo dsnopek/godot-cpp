@@ -205,6 +205,8 @@ public:
 	void set_prop_value(int p_prop_value);
 	int get_prop_value() const;
 
+	virtual void _process(double p_delta) override;
+
 	ExampleGameplay();
 	~ExampleGameplay();
 };
