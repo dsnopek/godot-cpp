@@ -626,3 +626,10 @@ void Example::_input(const Ref<InputEvent> &event) {
 		emit_custom_signal(String("_input: ") + key_event->get_key_label(), key_event->get_unicode());
 	}
 }
+
+String ExampleSubclass::_get_tooltip(const Vector2 &p_position) const {
+	if (p_position == Vector2(100.0, 100.0)) {
+		return "ExampleSubclass tooltip";
+	}
+	return String();
+}

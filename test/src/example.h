@@ -186,6 +186,17 @@ public:
 VARIANT_ENUM_CAST(Example::Constants);
 VARIANT_BITFIELD_CAST(Example::Flags);
 
+class ExampleSubclass : public Example {
+	GDCLASS(ExampleSubclass, Example);
+
+protected:
+	static void _bind_methods() {}
+
+public:
+	virtual String _get_tooltip(const Vector2 &p_position) const override;
+
+};
+
 enum EnumWithoutClass {
 	OUTSIDE_OF_CLASS = 512
 };

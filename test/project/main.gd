@@ -241,6 +241,11 @@ func _ready():
 	assert_equal(new_example_ref.was_post_initialized(), true)
 	assert_equal(example.test_post_initialize(), true)
 
+	# Check multitiered virtual method.
+	var example_subclass = ExampleSubclass.new()
+	assert_equal(example_subclass.get_tooltip(Vector2(0, 0)), "")
+	assert_equal(example_subclass.get_tooltip(Vector2(100.0, 100.0)), "ExampleSubclass tooltip")
+
 	exit_with_status()
 
 func _on_Example_custom_signal(signal_name, value):
