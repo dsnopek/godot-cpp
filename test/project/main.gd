@@ -169,6 +169,11 @@ func _ready():
 	get_viewport().push_input(event)
 	assert_equal(custom_signal_emitted, ["_input: H", 72])
 
+	# Test that notifications happen on both parent and child classes.
+	var example_child = $ExampleChild
+	assert_equal(example_child.get_value1(), 11)
+	assert_equal(example_child.get_value2(), 33)
+
 	exit_with_status()
 
 func _on_Example_custom_signal(signal_name, value):
