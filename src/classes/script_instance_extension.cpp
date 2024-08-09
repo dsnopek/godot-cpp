@@ -54,17 +54,28 @@ static GDExtensionBool gdextension_script_instance_get(GDExtensionScriptInstance
 static const GDExtensionPropertyInfo *gdextension_script_instance_get_property_list(GDExtensionScriptInstanceDataPtr p_instance, uint32_t *r_count) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 
-	return instance->get_property_list(r_count);
+	instance->get_property_list(&instance->property_list);
+
+	if (property_list.size() == 0) {
+		*r_count = 0;
+		return nullptr;
+	}
+
+	*r_count = properties.size();
+	GDExtensionPropertyInfo *property_array = memnew_arr(GDExtensionPropertyInfo, properties.size());
+
+	int index = 0;
+	for (const PropertyInfo &prop : properties) {
+		// @todo Do we need to allocate memory for the String and StringName pointers so the memory remains valid?
+		property_array[index] = prop._to_gdextension();
+		index++;
+	}
+
+	return property_array;
 }
 
 static void gdextension_script_instance_free_property_list(GDExtensionScriptInstanceDataPtr p_instance, const GDExtensionPropertyInfo *p_list, uint32_t p_count) {
-	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
-	instance->free_property_list(p_list, p_count);
-}
-
-static GDExtensionBool gdextension_script_instance_get_class_category(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionPropertyInfo *r_class_category) {
-	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
-	return instance->get_class_category(*r_class_category);
+	memfree((void *)p_list);
 }
 
 static GDExtensionVariantType gdextension_script_instance_get_property_type(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionBool *r_is_valid) {
@@ -80,7 +91,13 @@ static GDExtensionVariantType gdextension_script_instance_get_property_type(GDEx
 
 static GDExtensionBool gdextension_script_instance_validate_property(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionPropertyInfo *p_property) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
-	return instance->validate_property(*p_property);
+
+	PropertyInfo property(p_property);
+	instance->validate_property(property);
+
+	*p_property = property._to_gdextension();
+
+	return true;
 }
 
 static GDExtensionBool gdextension_script_instance_property_can_revert(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name) {
@@ -107,17 +124,41 @@ static GDExtensionObjectPtr gdextension_script_instance_get_owner(GDExtensionScr
 
 static void gdextension_script_instance_get_property_state(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionScriptInstancePropertyStateAdd p_add_func, void *p_userdata) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
-	instance->get_property_state(p_add_func, p_userdata);
+
+	List<Pair<StringName, Variant>> property_state;
+	instance->get_property_state(property_state);
+
+	for (const Pair<StringName, Variant> &state : property_state) {
+		p_add_func(state.first._native_ptr(), state.second._native_ptr(), p_userdata);
+	}
 }
 
 static const GDExtensionMethodInfo *gdextension_script_instance_get_method_list(GDExtensionScriptInstanceDataPtr p_instance, uint32_t *r_count) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
-	return instance->get_method_list(r_count);
+
+	List<MethodInfo> methods;
+	instance->get_method_list(&methods);
+
+	if (methods.size() == 0) {
+		*r_count = 0;
+		return nullptr;
+	}
+
+	*r_count = methods.size();
+	GDExtensionMethodInfo *method_array = memnew_arr(GDExtensionMethodInfo, methods.size());
+
+	int index = 0;
+	for (const MethodInfo &method : methods) {
+		// @todo Do we need to allocate memory for the pointers so they stay valid?
+		method_array[index] = method._to_gdextension();
+		index++;
+	}
+
+	return method_array;
 }
 
 static void gdextension_script_instance_free_method_list(GDExtensionScriptInstanceDataPtr p_instance, const GDExtensionMethodInfo *p_list, uint32_t p_count) {
-	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
-	return instance->free_method_list(p_list, p_count);
+	memfree(p_list);
 }
 
 static GDExtensionBool gdextension_script_instance_has_method(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name) {
@@ -144,7 +185,12 @@ static void gdextension_script_instance_call(GDExtensionScriptInstanceDataPtr p_
 	const Variant **args = reinterpret_cast<const Variant **>(const_cast<const void **>(p_args));
 	Variant *ret = reinterpret_cast<Variant *>(r_return);
 
-	*ret = instance->callp(*method, args, p_argument_count, *r_error);
+	Callable::CallError error;
+	*ret = instance->callp(*method, args, p_argument_count, error);
+
+	r_error->error = (GDExtensionCallErrorType)error.error;
+	r_error->argument = error.argument;
+	r_error->expected = error.expected;
 }
 
 static void gdextension_script_instance_notification(GDExtensionScriptInstanceDataPtr p_instance, int32_t p_what, GDExtensionBool p_reversed) {
@@ -218,7 +264,10 @@ GDExtensionScriptInstanceInfo3 ScriptInstanceExtension::script_instance_info = {
 	&gdextension_script_instance_get,
 	&gdextension_script_instance_get_property_list,
 	&gdextension_script_instance_free_property_list,
-	&gdextension_script_instance_get_class_category,
+	// We omit get_class_category_func for parity with Godot modules, which aren't able to
+	// customize the category from the ScriptInstance - only the Script - which is what happens
+	// if we omit this.
+	nullptr,
 	&gdextension_script_instance_property_can_revert,
 	&gdextension_script_instance_property_get_revert,
 	&gdextension_script_instance_get_owner,
