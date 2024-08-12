@@ -35,7 +35,7 @@
 
 using namespace godot;
 
-static GDExtensionBool gdextension_script_instance_set(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionConstVariantPtr p_value) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_set(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionConstVariantPtr p_value) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 	const Variant *value = reinterpret_cast<const Variant *>(p_value);
@@ -43,7 +43,7 @@ static GDExtensionBool gdextension_script_instance_set(GDExtensionScriptInstance
 	return instance->set(*name, *value);
 }
 
-static GDExtensionBool gdextension_script_instance_get(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionVariantPtr r_ret) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_get(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionVariantPtr r_ret) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 	Variant *ret = reinterpret_cast<Variant *>(r_ret);
@@ -51,21 +51,21 @@ static GDExtensionBool gdextension_script_instance_get(GDExtensionScriptInstance
 	return instance->get(*name, *ret);
 }
 
-static const GDExtensionPropertyInfo *gdextension_script_instance_get_property_list(GDExtensionScriptInstanceDataPtr p_instance, uint32_t *r_count) {
+const GDExtensionPropertyInfo *ScriptInstanceExtension::gdextension_script_instance_get_property_list(GDExtensionScriptInstanceDataPtr p_instance, uint32_t *r_count) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 
 	instance->get_property_list(&instance->property_list);
 
-	if (property_list.size() == 0) {
+	if (instance->property_list.size() == 0) {
 		*r_count = 0;
 		return nullptr;
 	}
 
-	*r_count = properties.size();
-	GDExtensionPropertyInfo *property_array = memnew_arr(GDExtensionPropertyInfo, properties.size());
+	*r_count = instance->property_list.size();
+	GDExtensionPropertyInfo *property_array = memnew_arr(GDExtensionPropertyInfo, instance->property_list.size());
 
 	int index = 0;
-	for (const PropertyInfo &prop : properties) {
+	for (const PropertyInfo &prop : instance->property_list) {
 		// @todo Do we need to allocate memory for the String and StringName pointers so the memory remains valid?
 		property_array[index] = prop._to_gdextension();
 		index++;
@@ -74,11 +74,13 @@ static const GDExtensionPropertyInfo *gdextension_script_instance_get_property_l
 	return property_array;
 }
 
-static void gdextension_script_instance_free_property_list(GDExtensionScriptInstanceDataPtr p_instance, const GDExtensionPropertyInfo *p_list, uint32_t p_count) {
+void ScriptInstanceExtension::gdextension_script_instance_free_property_list(GDExtensionScriptInstanceDataPtr p_instance, const GDExtensionPropertyInfo *p_list, uint32_t p_count) {
+	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	memfree((void *)p_list);
+	instance->property_list.clear();
 }
 
-static GDExtensionVariantType gdextension_script_instance_get_property_type(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionBool *r_is_valid) {
+GDExtensionVariantType ScriptInstanceExtension::gdextension_script_instance_get_property_type(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionBool *r_is_valid) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 
@@ -89,7 +91,7 @@ static GDExtensionVariantType gdextension_script_instance_get_property_type(GDEx
 	return ret;
 }
 
-static GDExtensionBool gdextension_script_instance_validate_property(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionPropertyInfo *p_property) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_validate_property(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionPropertyInfo *p_property) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 
 	PropertyInfo property(p_property);
@@ -100,14 +102,14 @@ static GDExtensionBool gdextension_script_instance_validate_property(GDExtension
 	return true;
 }
 
-static GDExtensionBool gdextension_script_instance_property_can_revert(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_property_can_revert(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 
 	return instance->property_can_revert(*name);
 }
 
-static GDExtensionBool gdextension_script_instance_property_get_revert(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionVariantPtr r_ret) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_property_get_revert(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionVariantPtr r_ret) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 	Variant *ret = reinterpret_cast<Variant *>(r_ret);
@@ -115,14 +117,14 @@ static GDExtensionBool gdextension_script_instance_property_get_revert(GDExtensi
 	return instance->property_get_revert(*name, *ret);
 }
 
-static GDExtensionObjectPtr gdextension_script_instance_get_owner(GDExtensionScriptInstanceDataPtr p_instance) {
+GDExtensionObjectPtr ScriptInstanceExtension::gdextension_script_instance_get_owner(GDExtensionScriptInstanceDataPtr p_instance) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 
 	Object *ret = instance->get_owner();
 	return ret->_owner;
 }
 
-static void gdextension_script_instance_get_property_state(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionScriptInstancePropertyStateAdd p_add_func, void *p_userdata) {
+void ScriptInstanceExtension::gdextension_script_instance_get_property_state(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionScriptInstancePropertyStateAdd p_add_func, void *p_userdata) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 
 	List<Pair<StringName, Variant>> property_state;
@@ -133,9 +135,10 @@ static void gdextension_script_instance_get_property_state(GDExtensionScriptInst
 	}
 }
 
-static const GDExtensionMethodInfo *gdextension_script_instance_get_method_list(GDExtensionScriptInstanceDataPtr p_instance, uint32_t *r_count) {
+const GDExtensionMethodInfo *ScriptInstanceExtension::gdextension_script_instance_get_method_list(GDExtensionScriptInstanceDataPtr p_instance, uint32_t *r_count) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 
+	/*
 	List<MethodInfo> methods;
 	instance->get_method_list(&methods);
 
@@ -155,20 +158,22 @@ static const GDExtensionMethodInfo *gdextension_script_instance_get_method_list(
 	}
 
 	return method_array;
+	*/
+	return nullptr;
 }
 
-static void gdextension_script_instance_free_method_list(GDExtensionScriptInstanceDataPtr p_instance, const GDExtensionMethodInfo *p_list, uint32_t p_count) {
-	memfree(p_list);
+void ScriptInstanceExtension::gdextension_script_instance_free_method_list(GDExtensionScriptInstanceDataPtr p_instance, const GDExtensionMethodInfo *p_list, uint32_t p_count) {
+	memfree((void *)p_list);
 }
 
-static GDExtensionBool gdextension_script_instance_has_method(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_has_method(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 
 	return instance->has_method(*name);
 }
 
-static GDExtensionInt gdextension_script_instance_get_method_argument_count(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionBool *r_is_valid) {
+GDExtensionInt ScriptInstanceExtension::gdextension_script_instance_get_method_argument_count(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionBool *r_is_valid) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 
@@ -179,7 +184,7 @@ static GDExtensionInt gdextension_script_instance_get_method_argument_count(GDEx
 	return ret;
 }
 
-static void gdextension_script_instance_call(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_method, const GDExtensionConstVariantPtr *p_args, GDExtensionInt p_argument_count, GDExtensionVariantPtr r_return, GDExtensionCallError *r_error) {
+void ScriptInstanceExtension::gdextension_script_instance_call(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_method, const GDExtensionConstVariantPtr *p_args, GDExtensionInt p_argument_count, GDExtensionVariantPtr r_return, GDExtensionCallError *r_error) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *method = reinterpret_cast<const StringName *>(p_method);
 	const Variant **args = reinterpret_cast<const Variant **>(const_cast<const void **>(p_args));
@@ -193,12 +198,12 @@ static void gdextension_script_instance_call(GDExtensionScriptInstanceDataPtr p_
 	r_error->expected = error.expected;
 }
 
-static void gdextension_script_instance_notification(GDExtensionScriptInstanceDataPtr p_instance, int32_t p_what, GDExtensionBool p_reversed) {
+void ScriptInstanceExtension::gdextension_script_instance_notification(GDExtensionScriptInstanceDataPtr p_instance, int32_t p_what, GDExtensionBool p_reversed) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	instance->notification(p_what, p_reversed);
 }
 
-static void gdextension_script_instance_to_string(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionBool *r_is_valid, GDExtensionStringPtr r_out) {
+void ScriptInstanceExtension::gdextension_script_instance_to_string(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionBool *r_is_valid, GDExtensionStringPtr r_out) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	String *out = reinterpret_cast<String *>(r_out);
 
@@ -207,27 +212,27 @@ static void gdextension_script_instance_to_string(GDExtensionScriptInstanceDataP
 	*r_is_valid = is_valid;
 }
 
-static void gdextension_script_instance_refcount_incremented(GDExtensionScriptInstanceDataPtr p_instance) {
+void ScriptInstanceExtension::gdextension_script_instance_refcount_incremented(GDExtensionScriptInstanceDataPtr p_instance) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	instance->refcount_incremented();
 }
 
-static GDExtensionBool gdextension_script_instance_refcount_decremented(GDExtensionScriptInstanceDataPtr p_instance) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_refcount_decremented(GDExtensionScriptInstanceDataPtr p_instance) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	return instance->refcount_decremented();
 }
 
-static GDExtensionObjectPtr gdextension_script_instance_get_script(GDExtensionScriptInstanceDataPtr p_instance) {
+GDExtensionObjectPtr ScriptInstanceExtension::gdextension_script_instance_get_script(GDExtensionScriptInstanceDataPtr p_instance) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	return instance->get_script()->_owner;
 }
 
-static GDExtensionBool gdextension_script_instance_is_placeholder(GDExtensionScriptInstanceDataPtr p_instance) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_is_placeholder(GDExtensionScriptInstanceDataPtr p_instance) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	return instance->is_placeholder();
 }
 
-static GDExtensionBool gdextension_script_instance_set_fallback(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionConstVariantPtr p_value) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_set_fallback(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionConstVariantPtr p_value) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 	const Variant *value = reinterpret_cast<const Variant *>(p_value);
@@ -237,7 +242,7 @@ static GDExtensionBool gdextension_script_instance_set_fallback(GDExtensionScrip
 	return is_valid;
 }
 
-static GDExtensionBool gdextension_script_instance_get_fallback(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionVariantPtr r_ret) {
+GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_get_fallback(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name, GDExtensionVariantPtr r_ret) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	const StringName *name = reinterpret_cast<const StringName *>(p_name);
 	Variant *ret = reinterpret_cast<Variant *>(r_ret);
@@ -247,46 +252,49 @@ static GDExtensionBool gdextension_script_instance_get_fallback(GDExtensionScrip
 	return is_valid;
 }
 
-static GDExtensionScriptLanguagePtr gdextension_script_instance_get_language(GDExtensionScriptInstanceDataPtr p_instance) {
+GDExtensionScriptLanguagePtr ScriptInstanceExtension::gdextension_script_instance_get_language(GDExtensionScriptInstanceDataPtr p_instance) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 	return instance->get_language()->_owner;
 }
 
-static void gdextension_script_instance_free(GDExtensionScriptInstanceDataPtr p_instance) {
+void ScriptInstanceExtension::gdextension_script_instance_free(GDExtensionScriptInstanceDataPtr p_instance) {
 	if (p_instance) {
 		ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 		memdelete(instance);
 	}
 }
 
+thread_local List<PropertyInfo> ScriptInstanceExtension::property_list;
+thread_local List<MethodInfo> ScriptInstanceExtension::method_list;
+
 GDExtensionScriptInstanceInfo3 ScriptInstanceExtension::script_instance_info = {
-	&gdextension_script_instance_set,
-	&gdextension_script_instance_get,
-	&gdextension_script_instance_get_property_list,
-	&gdextension_script_instance_free_property_list,
+	&ScriptInstanceExtension::gdextension_script_instance_set,
+	&ScriptInstanceExtension::gdextension_script_instance_get,
+	&ScriptInstanceExtension::gdextension_script_instance_get_property_list,
+	&ScriptInstanceExtension::gdextension_script_instance_free_property_list,
 	// We omit get_class_category_func for parity with Godot modules, which aren't able to
 	// customize the category from the ScriptInstance - only the Script - which is what happens
 	// if we omit this.
 	nullptr,
-	&gdextension_script_instance_property_can_revert,
-	&gdextension_script_instance_property_get_revert,
-	&gdextension_script_instance_get_owner,
-	&gdextension_script_instance_get_property_state,
-	&gdextension_script_instance_get_method_list,
-	&gdextension_script_instance_free_method_list,
-	&gdextension_script_instance_get_property_type,
-	&gdextension_script_instance_validate_property,
-	&gdextension_script_instance_has_method,
-	&gdextension_script_instance_get_method_argument_count,
-	&gdextension_script_instance_call,
-	&gdextension_script_instance_notification,
-	&gdextension_script_instance_to_string,
-	&gdextension_script_instance_refcount_incremented,
-	&gdextension_script_instance_refcount_decremented,
-	&gdextension_script_instance_get_script,
-	&gdextension_script_instance_is_placeholder,
-	&gdextension_script_instance_set_fallback,
-	&gdextension_script_instance_get_fallback,
-	&gdextension_script_instance_get_language,
-	&gdextension_script_instance_free,
+	&ScriptInstanceExtension::gdextension_script_instance_property_can_revert,
+	&ScriptInstanceExtension::gdextension_script_instance_property_get_revert,
+	&ScriptInstanceExtension::gdextension_script_instance_get_owner,
+	&ScriptInstanceExtension::gdextension_script_instance_get_property_state,
+	&ScriptInstanceExtension::gdextension_script_instance_get_method_list,
+	&ScriptInstanceExtension::gdextension_script_instance_free_method_list,
+	&ScriptInstanceExtension::gdextension_script_instance_get_property_type,
+	&ScriptInstanceExtension::gdextension_script_instance_validate_property,
+	&ScriptInstanceExtension::gdextension_script_instance_has_method,
+	&ScriptInstanceExtension::gdextension_script_instance_get_method_argument_count,
+	&ScriptInstanceExtension::gdextension_script_instance_call,
+	&ScriptInstanceExtension::gdextension_script_instance_notification,
+	&ScriptInstanceExtension::gdextension_script_instance_to_string,
+	&ScriptInstanceExtension::gdextension_script_instance_refcount_incremented,
+	&ScriptInstanceExtension::gdextension_script_instance_refcount_decremented,
+	&ScriptInstanceExtension::gdextension_script_instance_get_script,
+	&ScriptInstanceExtension::gdextension_script_instance_is_placeholder,
+	&ScriptInstanceExtension::gdextension_script_instance_set_fallback,
+	&ScriptInstanceExtension::gdextension_script_instance_get_fallback,
+	&ScriptInstanceExtension::gdextension_script_instance_get_language,
+	&ScriptInstanceExtension::gdextension_script_instance_free,
 };
