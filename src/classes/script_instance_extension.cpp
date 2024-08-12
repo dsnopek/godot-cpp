@@ -138,7 +138,6 @@ void ScriptInstanceExtension::gdextension_script_instance_get_property_state(GDE
 const GDExtensionMethodInfo *ScriptInstanceExtension::gdextension_script_instance_get_method_list(GDExtensionScriptInstanceDataPtr p_instance, uint32_t *r_count) {
 	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
 
-	/*
 	List<MethodInfo> methods;
 	instance->get_method_list(&methods);
 
@@ -152,18 +151,35 @@ const GDExtensionMethodInfo *ScriptInstanceExtension::gdextension_script_instanc
 
 	int index = 0;
 	for (const MethodInfo &method : methods) {
-		// @todo Do we need to allocate memory for the pointers so they stay valid?
-		method_array[index] = method._to_gdextension();
+		method_array[index].name = method.name._native_ptr();
+		method_array[index].return_value = method.return_val._to_gdextension();
+		method_array[index].flags = method.flags;
+		method_array[index].id = method.id;
+		method_array[index].argument_count = method.arguments.size();
+		method_array[index].arguments = memnew_arr(GDExtensionPropertyInfo, method.arguments.size());
+		for (int n = 0; n < method.arguments.size(); n++) {
+			method_array[index].arguments[n] = method.arguments[n]._to_gdextension();
+		}
+		method_array[index].default_argument_count = method.default_arguments.size();
+		method_array[index].default_arguments = memnew_arr(GDExtensionVariantPtr, method.default_arguments.size());
+		for (int n = 0; n < method.default_arguments.size(); n++) {
+			method_array[index].default_arguments[n] = method.default_arguments[n]._native_ptr();
+		}
+
 		index++;
 	}
 
 	return method_array;
-	*/
-	return nullptr;
 }
 
 void ScriptInstanceExtension::gdextension_script_instance_free_method_list(GDExtensionScriptInstanceDataPtr p_instance, const GDExtensionMethodInfo *p_list, uint32_t p_count) {
+	ScriptInstanceExtension *instance = reinterpret_cast<ScriptInstanceExtension *>(p_instance);
+	for (int i = 0; i < p_count; i++) {
+		memfree(p_list[i].arguments);
+		memfree(p_list[i].default_arguments);
+	}
 	memfree((void *)p_list);
+	instance->method_list.clear();
 }
 
 GDExtensionBool ScriptInstanceExtension::gdextension_script_instance_has_method(GDExtensionScriptInstanceDataPtr p_instance, GDExtensionConstStringNamePtr p_name) {
