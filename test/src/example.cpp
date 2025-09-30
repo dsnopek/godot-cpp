@@ -779,3 +779,13 @@ void ExamplePrzykład::_bind_methods() {
 String ExamplePrzykład::get_the_word() const {
 	return U"słowo to przykład";
 }
+
+void ExampleInternal::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_value"), &ExampleInternal::get_value);
+	ClassDB::bind_method(D_METHOD("set_value", "value"), &ExampleInternal::set_value);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "value"), "set_value", "get_value");
+}
+
+ExampleInternal::ExampleInternal() {
+	print_line("Example internal is created!");
+}

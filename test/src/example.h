@@ -288,3 +288,18 @@ protected:
 public:
 	String get_the_word() const;
 };
+
+class ExampleInternal : public Object {
+	GDCLASS(ExampleInternal, Object);
+
+	int value = 33;
+
+protected:
+	static void _bind_methods();
+
+public:
+	int get_value() { return value; }
+	void set_value(int p_value) { value = p_value; }
+
+	ExampleInternal();
+};

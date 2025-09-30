@@ -291,6 +291,11 @@ func _ready():
 	var przykład = ExamplePrzykład.new()
 	assert_equal(przykład.get_the_word(), "słowo to przykład")
 
+	print("ClassDB.class_exists: ", ClassDB.class_exists("ExampleInternal"))
+	print("ClassDB.can_instantiate: ", ClassDB.can_instantiate("ExampleInternal"))
+	print("ClassDB.instantiate: ", ClassDB.instantiate("ExampleInternal"))
+	print("ClassDB.class_get_property_default_value: ", ClassDB.class_get_property_default_value("ExampleInternal", "value"))
+
 	exit_with_status()
 
 func _on_Example_custom_signal(signal_name, value):
