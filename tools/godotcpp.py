@@ -162,6 +162,7 @@ def scons_generate_bindings(target, source, env):
     _generate_bindings(
         api,
         str(source[0]),
+        str(source[1]),
         env["generate_template_get_node"],
         "32" if "32" in env["arch"] else "64",
         env["precision"],
@@ -538,8 +539,9 @@ def _godot_cpp(env):
         env.Dir("."),
         [
             api_file,
-            os.path.join(extension_dir, "gdextension_interface.h"),
+            os.path.join(extension_dir, "gdextension_interface.json"),
             "binding_generator.py",
+            "make_interface_header.py",
         ],
     )
     # Forces bindings regeneration.
@@ -559,7 +561,7 @@ def _godot_cpp(env):
     # Includes
     env.AppendUnique(
         CPPPATH=[
-            env.Dir(extension_dir),
+            env.Dir("gen/gdextension"),
             env.Dir("include").srcnode(),
             env.Dir("gen/include"),
         ]

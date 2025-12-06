@@ -35,7 +35,7 @@
 namespace godot {
 
 void *Memory::alloc_static(size_t p_bytes, bool p_pad_align) {
-	return internal::gdextension_interface_mem_alloc2(p_bytes, p_pad_align);
+	return ::godot::interface::mem_alloc2(p_bytes, p_pad_align);
 }
 
 void *Memory::realloc_static(void *p_memory, size_t p_bytes, bool p_pad_align) {
@@ -46,11 +46,11 @@ void *Memory::realloc_static(void *p_memory, size_t p_bytes, bool p_pad_align) {
 		return nullptr;
 	}
 
-	return internal::gdextension_interface_mem_realloc2(p_memory, p_bytes, p_pad_align);
+	return ::godot::interface::mem_realloc2(p_memory, p_bytes, p_pad_align);
 }
 
 void Memory::free_static(void *p_ptr, bool p_pad_align) {
-	internal::gdextension_interface_mem_free2(p_ptr, p_pad_align);
+	::godot::interface::mem_free2(p_ptr, p_pad_align);
 }
 
 _GlobalNil::_GlobalNil() {

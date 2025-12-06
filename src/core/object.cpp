@@ -42,7 +42,7 @@ Object *get_object_instance_binding(GodotObject *p_engine_object) {
 	}
 
 	// Get existing instance binding, if one already exists.
-	GDExtensionObjectPtr instance = gdextension_interface_object_get_instance_binding(p_engine_object, token, nullptr);
+	GDExtensionObjectPtr instance = ::godot::interface::object_get_instance_binding(p_engine_object, ::godot::interface::token, nullptr);
 	if (instance != nullptr) {
 		return reinterpret_cast<Object *>(instance);
 	}
@@ -50,14 +50,14 @@ Object *get_object_instance_binding(GodotObject *p_engine_object) {
 	// Otherwise, try to look up the correct binding callbacks.
 	const GDExtensionInstanceBindingCallbacks *binding_callbacks = nullptr;
 	StringName class_name;
-	if (gdextension_interface_object_get_class_name(p_engine_object, library, reinterpret_cast<GDExtensionStringNamePtr>(class_name._native_ptr()))) {
+	if (::godot::interface::object_get_class_name(p_engine_object, ::godot::interface::library, reinterpret_cast<GDExtensionStringNamePtr>(class_name._native_ptr()))) {
 		binding_callbacks = ClassDB::get_instance_binding_callbacks(class_name);
 	}
 	if (binding_callbacks == nullptr) {
 		binding_callbacks = &Object::_gde_binding_callbacks;
 	}
 
-	return reinterpret_cast<Object *>(gdextension_interface_object_get_instance_binding(p_engine_object, token, binding_callbacks));
+	return reinterpret_cast<Object *>(::godot::interface::object_get_instance_binding(p_engine_object, ::godot::interface::token, binding_callbacks));
 }
 
 TypedArray<Dictionary> convert_property_list(const LocalVector<PropertyInfo> &p_list) {

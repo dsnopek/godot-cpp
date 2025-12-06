@@ -108,7 +108,7 @@ MethodInfo::MethodInfo(const PropertyInfo &p_ret, StringName p_name, const Args 
 class ObjectDB {
 public:
 	static Object *get_instance(uint64_t p_object_id) {
-		GDExtensionObjectPtr obj = internal::gdextension_interface_object_get_instance_from_id(p_object_id);
+		GDExtensionObjectPtr obj = ::godot::interface::object_get_instance_from_id(p_object_id);
 		if (obj == nullptr) {
 			return nullptr;
 		}
@@ -122,7 +122,7 @@ T *Object::cast_to(Object *p_object) {
 		return nullptr;
 	}
 	StringName class_name = T::get_class_static();
-	GDExtensionObjectPtr casted = internal::gdextension_interface_object_cast_to(p_object->_owner, internal::gdextension_interface_classdb_get_class_tag(class_name._native_ptr()));
+	GDExtensionObjectPtr casted = ::godot::interface::object_cast_to(p_object->_owner, ::godot::interface::classdb_get_class_tag(class_name._native_ptr()));
 	if (casted == nullptr) {
 		return nullptr;
 	}
@@ -135,7 +135,7 @@ const T *Object::cast_to(const Object *p_object) {
 		return nullptr;
 	}
 	StringName class_name = T::get_class_static();
-	GDExtensionObjectPtr casted = internal::gdextension_interface_object_cast_to(p_object->_owner, internal::gdextension_interface_classdb_get_class_tag(class_name._native_ptr()));
+	GDExtensionObjectPtr casted = ::godot::interface::object_cast_to(p_object->_owner, ::godot::interface::classdb_get_class_tag(class_name._native_ptr()));
 	if (casted == nullptr) {
 		return nullptr;
 	}
