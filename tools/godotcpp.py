@@ -176,7 +176,7 @@ def scons_generate_bindings(target, source, env):
     return None
 
 
-api_versions = ["4.5", "4.6"]
+api_versions = ["4.4", "4.5", "4.6"]
 
 platforms = ["linux", "macos", "windows", "android", "ios", "web"]
 
