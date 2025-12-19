@@ -5,8 +5,6 @@ on:
 env:
   # Only used for the cache key. Increment version to force clean build.
   GODOT_BASE_BRANCH: master
-  # The list of Godot versions to test.
-  GODOT_TEST_VERSIONS: "4.5"
   # Use UTF-8 on Linux.
   LANG: en_US.UTF-8
   LC_ALL: en_US.UTF-8
@@ -40,6 +38,7 @@ jobs:
             artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
             run-tests: true
             api-version: 4.5
+            godot-test-versions: "4.5"
             cache-name: linux-x86_64-godot45
 
           - name: 🏁 Windows (x86_64, MSVC)
@@ -166,9 +165,9 @@ jobs:
           chmod +x ./godot-builds/godot-master
 
       - name: Download supported Godot versions for testing
-        if: matrix.run-tests
+        if: matrix.run-tests && matrix.godot-test-versions
         run: |
-          for version in ${GODOT_TEST_VERSION}; do
+          for version in ${{ matrix.godot-test-versions }}; do
             wget "https://github.com/godotengine/godot-builds/releases/download/${version}/Godot_v${version}_linux.x86_64.zip" -O Godot.zip
             unzip -a Godot.zip
             mv "Godot_v${version}_linux.x86_64" "./godot-builds/godot-${version}"
@@ -180,7 +179,7 @@ jobs:
         if: matrix.run-tests
         run: |
           cd test
-          for version in ${GODOT_TEST_VERSION} master; do
+          for version in ${{ matrix.godot-test-versions }} master; do
             rm -rf ./project/.godot
             GODOT="./godot-builds/godot-${version}"
             $GODOT --headless --version
