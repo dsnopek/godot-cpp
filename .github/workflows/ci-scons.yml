@@ -31,14 +31,14 @@ jobs:
             run-tests: true
             cache-name: linux-x86_64
 
-          - name: 🐧 Linux (GCC) / API Version 4.5
+          - name: 🐧 Linux (GCC) for Godot 4.5
             os: ubuntu-22.04
             platform: linux
             artifact-name: godot-cpp-linux-glibc2.27-x86_64-release-godot45
             artifact-path: bin/libgodot-cpp.linux.template_release.x86_64.a
             run-tests: true
             api-version: 4.5
-            godot-test-versions: "4.5"
+            godot-test-versions: "4.5-stable"
             cache-name: linux-x86_64-godot45
 
           - name: 🏁 Windows (x86_64, MSVC)
@@ -178,10 +178,11 @@ jobs:
       - name: Run tests
         if: matrix.run-tests
         run: |
+          GODOT_BUILDS="$(pwd)/godot-builds"
           cd test
           for version in ${{ matrix.godot-test-versions }} master; do
             rm -rf ./project/.godot
-            GODOT="./godot-builds/godot-${version}"
+            GODOT="${GODOT_BUILDS}/godot-${version}"
             $GODOT --headless --version
             # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
             (cd project && (timeout 30 $GODOT --import --headless >/dev/null 2>&1 || true))
