@@ -182,7 +182,7 @@ jobs:
           cd test
           for version in ${{ matrix.godot-test-versions }} master; do
             rm -rf ./project/.godot
-            GODOT="${GODOT_BUILDS}/godot-${version}"
+            export GODOT="${GODOT_BUILDS}/godot-${version}"
             $GODOT --headless --version
             # Need to run the editor so .godot is generated... but it crashes! Ignore that :-)
             (cd project && (timeout 30 $GODOT --import --headless >/dev/null 2>&1 || true))
