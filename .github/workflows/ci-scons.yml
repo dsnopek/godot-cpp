@@ -162,6 +162,7 @@ jobs:
         run: |
           mkdir ./godot-builds
           mv ./godot-artifacts/godot.linuxbsd.editor.x86_64.mono ./godot-builds/godot-master
+          mv ./godot-artifacts/GodotSharp ./godot-builds/
           chmod +x ./godot-builds/godot-master
 
       - name: Download supported Godot versions for testing
