@@ -276,7 +276,7 @@ func _ready():
 
 	# Test that we can access an engine singleton.
 	assert_equal(example.test_use_engine_singleton1(), OS.get_name())
-	#assert_equal(example.test_use_engine_singleton2(), OS.get_name())
+	assert_equal(example.test_use_engine_singleton2(), OS.get_name())
 
 	if godot_target_version["minor"] >= 4:
 		assert_equal(example.test_get_internal(1), 1)
