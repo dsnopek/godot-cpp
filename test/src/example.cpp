@@ -7,6 +7,7 @@
 
 #include <godot_cpp/core/class_db.hpp>
 
+#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/multiplayer_api.hpp>
@@ -265,7 +266,8 @@ void Example::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("test_virtual_implemented_in_script"), &Example::test_virtual_implemented_in_script);
 	GDVIRTUAL_BIND(_do_something_virtual_with_control, "control");
 
-	ClassDB::bind_method(D_METHOD("test_use_engine_singleton"), &Example::test_use_engine_singleton);
+	ClassDB::bind_method(D_METHOD("test_use_engine_singleton1"), &Example::test_use_engine_singleton1);
+	ClassDB::bind_method(D_METHOD("test_use_engine_singleton2"), &Example::test_use_engine_singleton2);
 
 	ClassDB::bind_method(D_METHOD("test_get_internal_class"), &Example::test_get_internal_class);
 
@@ -758,8 +760,13 @@ String Example::test_virtual_implemented_in_script(const String &p_name, int p_v
 	return "Unimplemented";
 }
 
-String Example::test_use_engine_singleton() const {
+String Example::test_use_engine_singleton1() const {
 	return OS::get_singleton()->get_name();
+}
+
+String Example::test_use_engine_singleton2() const {
+	OS *os = Object::cast_to<OS>(Engine::get_singleton()->get_singleton("OS"));
+	return os->get_name();
 }
 
 String Example::test_library_path() {

@@ -1,6 +1,7 @@
 {
 	"enabled_classes": [
 		"Control",
+		"Engine",
 		"InputEventKey",
 		"Label",
 		"MultiplayerAPI",
