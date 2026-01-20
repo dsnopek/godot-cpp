@@ -414,6 +414,8 @@ private:                                                                        
 	friend class ::godot::ClassDB;                                                                                                                                                     \
 	friend class ::godot::Wrapped;                                                                                                                                                     \
                                                                                                                                                                                        \
+	void _godotcpp_initialize();                                                                                                                                                       \
+                                                                                                                                                                                       \
 protected:                                                                                                                                                                             \
 	m_class(const char *p_godot_class) : m_inherits(p_godot_class) {}                                                                                                                  \
 	m_class(GodotObject *p_godot_object) : m_inherits(p_godot_object) {}                                                                                                               \
@@ -495,7 +497,9 @@ public:                                                                         
 		_gde_binding_free_callback,                                                                                                                                                    \
 		_gde_binding_reference_callback,                                                                                                                                               \
 	};                                                                                                                                                                                 \
-	m_class() : m_class(#m_alias_for) {}                                                                                                                                               \
+	m_class() : m_class(#m_alias_for) {                                                                                                                                                \
+		_godotcpp_initialize();                                                                                                                                                        \
+	}                                                                                                                                                                                  \
                                                                                                                                                                                        \
 private:
 
