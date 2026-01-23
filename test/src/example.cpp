@@ -13,6 +13,7 @@
 #include <godot_cpp/classes/multiplayer_api.hpp>
 #include <godot_cpp/classes/multiplayer_peer.hpp>
 #include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/xr_server.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
@@ -764,9 +765,9 @@ String Example::test_use_engine_singleton1() const {
 	return OS::get_singleton()->get_name();
 }
 
-String Example::test_use_engine_singleton2() const {
-	OS *os = Object::cast_to<OS>(Engine::get_singleton()->get_singleton("OS"));
-	return os->get_name();
+bool Example::test_use_engine_singleton2() const {
+	XRServer *xr_server = Object::cast_to<XRServer>(Engine::get_singleton()->get_singleton("XRServer"));
+	return xr_server != nullptr;
 }
 
 String Example::test_library_path() {

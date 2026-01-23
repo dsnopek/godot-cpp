@@ -10,6 +10,7 @@
 		"TileMap",
 		"TileSet",
 		"Tween",
-		"Viewport"
+		"Viewport",
+		"XRServer"
 	]
 }
