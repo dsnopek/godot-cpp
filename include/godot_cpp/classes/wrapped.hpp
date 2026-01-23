@@ -414,11 +414,9 @@ private:                                                                        
 	friend class ::godot::ClassDB;                                                                                                                                                     \
 	friend class ::godot::Wrapped;                                                                                                                                                     \
                                                                                                                                                                                        \
-	void _godotcpp_initialize();                                                                                                                                                       \
-                                                                                                                                                                                       \
 protected:                                                                                                                                                                             \
 	m_class(const char *p_godot_class) : m_inherits(p_godot_class) {}                                                                                                                  \
-	m_class(GodotObject *p_godot_object) : m_inherits(p_godot_object) {}                                                                                                               \
+	m_class(GodotObject *p_godot_object);                                                                                                                                              \
                                                                                                                                                                                        \
 	static void _bind_methods() {}                                                                                                                                                     \
                                                                                                                                                                                        \
@@ -483,7 +481,6 @@ public:                                                                         
 	static void *_gde_binding_create_callback(void *p_token, void *p_instance) {                                                                                                       \
 		/* Do not call memnew here, we don't want the post-initializer to be called */                                                                                                 \
 		m_class *obj = new ("", "") m_class((GodotObject *)p_instance);                                                                                                                \
-		obj->_godotcpp_initialize();                                                                                                                                                   \
 		return obj;                                                                                                                                                                    \
 	}                                                                                                                                                                                  \
 	static void _gde_binding_free_callback(void *p_token, void *p_instance, void *p_binding) {                                                                                         \

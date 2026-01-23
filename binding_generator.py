@@ -2062,6 +2062,7 @@ def generate_engine_class_source(class_api, used_classes, fully_used_classes, us
     result = []
 
     class_name = class_api["name"]
+    inherits = class_api["inherits"] if "inherits" in class_api else "Wrapped"
     snake_class_name = camel_to_snake(class_name)
     is_singleton = class_name in singletons
 
@@ -2113,7 +2114,7 @@ def generate_engine_class_source(class_api, used_classes, fully_used_classes, us
         result.append("}")
         result.append("")
 
-        result.append(f"void {class_name}::_godotcpp_initialize() {{")
+        result.append(f"{class_name}::{class_name}(GodotObject *p_godot_object) : {inherits}(p_godot_object) {{")
         result.append("\tif (singleton == nullptr) {")
         result.append("\t\tsingleton = this;")
         result.append(f"\t\tClassDB::_register_engine_singleton({class_name}::get_class_static(), singleton);")
@@ -2129,7 +2130,7 @@ def generate_engine_class_source(class_api, used_classes, fully_used_classes, us
         result.append("}")
         result.append("")
     else:
-        result.append(f"void {class_name}::_godotcpp_initialize() {{")
+        result.append(f"{class_name}::{class_name}(GodotObject *p_godot_object) : {inherits}(p_godot_object) {{")
         result.append("}")
         result.append("")
 
