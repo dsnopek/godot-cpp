@@ -176,7 +176,10 @@ def scons_generate_bindings(target, source, env):
     return None
 
 
-supported_api_versions = ["4.3", "4.4", "4.5", "4.6"]
+supported_api_versions = ["4.3", "4.4", "4.5", "4.6", "4.7"]
+
+# We default to the latest stable Godot version.
+default_api_version = "4.6"
 
 platforms = ["linux", "macos", "windows", "android", "ios", "web"]
 
@@ -549,7 +552,7 @@ def generate(env):
 
 
 def _get_api_file(extension_dir, api_version):
-    if api_version is None or api_version == supported_api_versions[-1]:
+    if api_version is None or api_version == default_api_version:
         return os.path.join(extension_dir, "extension_api.json")
 
     filename = "extension_api-%s.json" % api_version.replace(".", "-")
