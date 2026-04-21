@@ -118,28 +118,20 @@ public:
 
 template <typename T>
 T *Object::cast_to(Object *p_object) {
-	if (p_object == nullptr) {
-		return nullptr;
-	}
-	StringName class_name = T::get_class_static();
-	GDExtensionObjectPtr casted = ::godot::gdextension_interface::object_cast_to(p_object->_owner, ::godot::gdextension_interface::classdb_get_class_tag(class_name._native_ptr()));
-	if (casted == nullptr) {
-		return nullptr;
-	}
-	return dynamic_cast<T *>(::godot::internal::get_object_instance_binding(casted));
+#if GODOT_VERSION_MINOR >= 7
+	return p_object && p_object->is_class(T::get_class_static()) ? static_cast<T *>(p_object) : nullptr;
+#else
+	return p_object ? dynamic_cast<T *>(p_object) : nullptr;
+#endif
 }
 
 template <typename T>
 const T *Object::cast_to(const Object *p_object) {
-	if (p_object == nullptr) {
-		return nullptr;
-	}
-	StringName class_name = T::get_class_static();
-	GDExtensionObjectPtr casted = ::godot::gdextension_interface::object_cast_to(p_object->_owner, ::godot::gdextension_interface::classdb_get_class_tag(class_name._native_ptr()));
-	if (casted == nullptr) {
-		return nullptr;
-	}
-	return dynamic_cast<const T *>(::godot::internal::get_object_instance_binding(casted));
+#if GODOT_VERSION_MINOR >= 7
+	return p_object && p_object->is_class(T::get_class_static()) ? static_cast<T *>(p_object) : nullptr;
+#else
+	return p_object ? dynamic_cast<T *>(p_object) : nullptr;
+#endif
 }
 
 } // namespace godot
