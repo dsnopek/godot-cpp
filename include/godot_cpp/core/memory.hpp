@@ -84,12 +84,22 @@ public:
 template <typename T, std::enable_if_t<!std::is_base_of<::godot::Wrapped, T>::value, bool> = true>
 _ALWAYS_INLINE_ void _pre_initialize() {}
 
+template <typename T, typename Enable = void>
+struct memnew_result {
+	using class_name = T *;
+	_ALWAYS_INLINE_ static class_name capture(T *p_obj) { return p_obj; }
+};
+
+template <typename T>
+using memnew_result_t = typename memnew_result<T>::class_name;
+
 _ALWAYS_INLINE_ void postinitialize_handler(void *) {}
 
 template <typename T>
-_ALWAYS_INLINE_ T *_post_initialize(T *p_obj) {
+_ALWAYS_INLINE_ memnew_result_t<T> _post_initialize(T *p_obj) {
+	memnew_result_t<T> result(memnew_result<T>::capture(p_obj));
 	postinitialize_handler(p_obj);
-	return p_obj;
+	return result;
 }
 
 #define memalloc(m_size) ::godot::Memory::alloc_static(m_size)

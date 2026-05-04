@@ -191,7 +191,8 @@ public:
 
 	template <typename... VarArgs>
 	void instantiate(VarArgs... p_params) {
-		ref(memnew(T(p_params...)));
+		Ref<T> ref = memnew(T(p_params...));
+		SWAP(reference, ref.reference);
 	}
 
 	uint32_t hash() const { return HashMapHasherDefault::hash(reference); }
@@ -210,6 +211,25 @@ public:
 		return r;
 	}
 };
+
+template <typename T>
+struct memnew_result<T, std::enable_if_t<std::is_base_of_v<RefCounted, T>>> {
+#if GODOT_VERSION_MINOR >= 7
+	using class_name = Ref<T>;
+	_ALWAYS_INLINE_ static class_name capture(T *p_obj) {
+		// Godot will have already incremented the refcount, so we can create the Ref<T> without incrementing it again.
+		return Ref<T>::_gde_internal_constructor(p_obj);
+	}
+#else
+	using class_name = T *;
+	_ALWAYS_INLINE_ static class_name capture(class_name p_obj) { return p_obj; }
+#endif
+};
+
+template <typename T>
+void postinitialize_handler(Ref<T> &p_object) {
+	postinitialize_handler(p_object.ptr());
+}
 
 template <typename T>
 struct PtrToArg<Ref<T>> {
