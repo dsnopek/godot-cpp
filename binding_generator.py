@@ -1511,12 +1511,7 @@ def generate_builtin_class_source(builtin_api, size, used_classes, fully_used_cl
 
     # Move assignment.
     result.append(f"{class_name} &{class_name}::operator=({class_name} &&p_other) {{")
-    if needs_copy_instead_of_move(class_name) and copy_constructor_index >= 0:
-        result.append(
-            f"\t::godot::internal::_call_builtin_constructor(_method_bindings.constructor_{copy_constructor_index}, &opaque, &p_other);"
-        )
-    else:
-        result.append("\tstd::swap(opaque, p_other.opaque);")
+    result.append("\tstd::swap(opaque, p_other.opaque);")
     result.append("\treturn *this;")
     result.append("}")
 
