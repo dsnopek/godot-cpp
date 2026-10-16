@@ -136,7 +136,7 @@ protected:
 
 public:
 	static _NO_INLINE_ const StringName &get_class_static() {
-		static const StringName string_name = StringName("Wrapped");
+		static const StringName string_name = StringName("Wrapped", true);
 		return string_name;
 	}
 
@@ -272,7 +272,7 @@ public: \
 	} \
 \
 	static _NO_INLINE_ const ::godot::StringName &get_class_static() { \
-		static const ::godot::StringName string_name = ::godot::StringName(U## #m_class); \
+		static const ::godot::StringName string_name = ::godot::StringName(U## #m_class, true); \
 		return string_name; \
 	} \
 \
@@ -485,7 +485,7 @@ public: \
 	static void initialize_class() {} \
 \
 	static _NO_INLINE_ const ::godot::StringName &get_class_static() { \
-		static const ::godot::StringName string_name = ::godot::StringName(#m_alias_for); \
+		static const ::godot::StringName string_name = ::godot::StringName(#m_alias_for, true); \
 		return string_name; \
 	} \
 \
